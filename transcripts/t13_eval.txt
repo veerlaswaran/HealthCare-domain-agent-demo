@@ -22,21 +22,21 @@ Test cases: 15  |  Judge: keyword-overlap heuristic (deterministic)
 ========================================================================================
 ID    Topic                              Route            CR    GR    AR  Lat(ms)
 ----------------------------------------------------------------------------------------
-Q01   appointment_booking_policy         rag            0.5   1.0   1.0     64.2
-Q02   cancellation_rescheduling_policy   rag            1.0   1.0   1.0      6.9
-Q03   consultation_fee_structure         rag            0.5   1.0   1.0      8.5
-Q04   consultation_fee_structure         rag            1.0   1.0   1.0      6.9
-Q05   insurance_claim_process            rag            1.0   1.0   1.0      6.7
-Q06   prescription_refill_policy         rag            0.5   1.0   1.0      6.2
-Q07   lab_test_turnaround_times          rag            0.5   1.0   1.0      5.2
-Q08   telemedicine_eligibility           rag            1.0   1.0   1.0      5.4
+Q01   appointment_booking_policy         rag            0.5   1.0   1.0     63.7
+Q02   cancellation_rescheduling_policy   rag            1.0   1.0   1.0     10.2
+Q03   consultation_fee_structure         rag            0.5   1.0   1.0      8.0
+Q04   consultation_fee_structure         rag            1.0   1.0   1.0      6.7
+Q05   insurance_claim_process            rag            1.0   1.0   1.0      5.0
+Q06   prescription_refill_policy         rag            0.5   1.0   1.0      5.4
+Q07   lab_test_turnaround_times          rag            0.5   1.0   1.0      5.9
+Q08   telemedicine_eligibility           rag            1.0   1.0   1.0      5.0
 Q09   emergency_visit_protocol           rag            1.0   1.0   1.0      5.8
-Q10   patient_data_privacy_policy        rag            1.0   1.0   1.0      6.1
-Q11   follow_up_visit_discount_policy    rag            1.0   1.0   1.0      5.5
-Q12   second_opinion_process             rag            1.0   1.0   1.0      5.1
-Q13   home_visit_eligibility             rag            1.0   1.0   1.0      5.0
-Q14   OUT_OF_SCOPE                       ungrounded     0.0   0.0   0.0      4.7
-Q15   EDGE_CASE                          ungrounded     0.5   0.0   0.0      4.5
+Q10   patient_data_privacy_policy        rag            1.0   1.0   1.0      5.7
+Q11   follow_up_visit_discount_policy    rag            1.0   1.0   1.0      5.4
+Q12   second_opinion_process             rag            1.0   1.0   1.0      5.3
+Q13   home_visit_eligibility             rag            1.0   1.0   1.0      4.7
+Q14   OUT_OF_SCOPE                       ungrounded     0.0   0.0   0.0      4.5
+Q15   EDGE_CASE                          ungrounded     0.5   0.0   0.0      4.7
 ----------------------------------------------------------------------------------------
 AVERAGE                                                  0.77  0.87  0.87
 ========================================================================================

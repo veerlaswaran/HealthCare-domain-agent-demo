@@ -19,7 +19,7 @@ Three guardrails tested: PII masking, injection block, groundedness.
   Route          : rag
   Query original : 'My number is 9123456789. Can you tell me the cancellation policy?'
   Query sanitised: 'My number is [PHONE_REDACTED]. Can you tell me the cancellation policy?'
-  Answer         : 'Based on Practo clinic policy (top 3 relevant section(s)):\n\n[1] (source: cancellation_rescheduling_policy, similarity: 0.2227)\nPatients must cancel or reschedule at least 4 hours before the scheduled'
+  Answer         : 'Based on Practo clinic policy (top 3 relevant section(s)):\n\n[1] (source: cancellation_rescheduling_policy, similarity: 0.2226)\nPatients must cancel or reschedule at least 4 hours before the scheduled'
   Guardrail events:
     [pii_masked]  Phone number(s) masked in query
 

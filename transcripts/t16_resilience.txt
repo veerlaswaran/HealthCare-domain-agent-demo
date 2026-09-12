@@ -7,16 +7,16 @@ Practo Agent — Resilience Demonstration (Task 16)
   Config: max_attempts=3, initial_delay=0.05s, backoff_factor=2.0, jitter=True
   Simulated failure on attempts 1 and 2; success on attempt 3.
 
-  [RETRY] flaky_appointment_lookup attempt 1/3 failed: Simulated transient DB error (attempt 1). Retrying in 0.053s...
+  [RETRY] flaky_appointment_lookup attempt 1/3 failed: Simulated transient DB error (attempt 1). Retrying in 0.054s...
   [RETRY] flaky_appointment_lookup attempt 2/3 failed: Simulated transient DB error (attempt 2). Retrying in 0.106s...
 
   SUCCESS on attempt 3
-  Total elapsed : 0.165s
+  Total elapsed : 0.170s
   Result        : found=True  status=No-Show  escalate=True
   PASS — retry recovered within 3 attempts.
 
   Bonus: retry exhausted (max_attempts=2, always fails):
-  [RETRY] always_fails attempt 1/2 failed: Permanent failure. Retrying in 0.021s...
+  [RETRY] always_fails attempt 1/2 failed: Permanent failure. Retrying in 0.022s...
   RetryExhaustedError caught: All 2 attempt(s) failed. Last error: ValueError: Permanent failure
   PASS — exhaustion raised correctly.
 
@@ -28,7 +28,7 @@ Practo Agent — Resilience Demonstration (Task 16)
 
   [rag_tool] Starting slow operation (polling every 50ms)...
   NodeTimeoutError: Node 'rag_tool' timed out after 0.3s
-  Elapsed         : 0.329s  (timeout was 0.3s)
+  Elapsed         : 0.320s  (timeout was 0.3s)
   PASS — per-node timeout fired cleanly, no hang.
 
 =================================================================
@@ -38,14 +38,14 @@ Practo Agent — Resilience Demonstration (Task 16)
 
   [agent] Starting slow policy query...
   GlobalTimeoutError: Global timeout exceeded (0.5s)
-  Elapsed           : 0.504s  (timeout was 0.5s)
+  Elapsed           : 0.503s  (timeout was 0.5s)
   PASS — global timeout cancelled the run cleanly.
 
 =================================================================
   Bonus: real agent run wrapped with global timeout (should complete)
 =================================================================
   Running real agent query with 10s global timeout...
-  Completed in 0.416s
+  Completed in 0.526s
   Route  : rag
   Grounded: True
   PASS — agent completed well within 10s timeout.

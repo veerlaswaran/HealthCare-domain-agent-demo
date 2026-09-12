@@ -3,7 +3,7 @@ Practo Knowledge Base — Seeding ChromaDB Collections
 Mode: OFFLINE (TF-IDF)
 ============================================================
 
-Loaded 13 documents from /Users/swveerl/Desktop/capstone-project/practo-project/data/knowledge_base
+Loaded 12 documents from /Users/swveerl/Desktop/capstone-project/practo-project/data/knowledge_base
   01_appointment_booking_policy.txt  (661 chars)  source=appointment_booking_policy
   02_cancellation_rescheduling_policy.txt  (640 chars)  source=cancellation_rescheduling_policy
   03_consultation_fee_structure.txt  (616 chars)  source=consultation_fee_structure
@@ -16,22 +16,21 @@ Loaded 13 documents from /Users/swveerl/Desktop/capstone-project/practo-project/
   10_follow_up_visit_discount.txt  (725 chars)  source=follow_up_visit_discount_policy
   11_second_opinion_process.txt  (777 chars)  source=second_opinion_process
   12_home_visit_eligibility.txt  (764 chars)  source=home_visit_eligibility
-  referral_policy.txt  (216 chars)  source=referral_policy
 
-Total chunks — fixed: 61, sentence: 37
+Total chunks — fixed: 59, sentence: 36
 
 Embedding all chunks...
-  Fixed-size   : 61 vectors, dim=592
-  Sentence-based: 37 vectors, dim=592
+  Fixed-size   : 59 vectors, dim=586
+  Sentence-based: 36 vectors, dim=586
 
-Collection 'policy_fixed'  : 61 chunks indexed
+Collection 'policy_fixed'  : 59 chunks indexed
   chunk size=200 chars, overlap=40 chars
-Collection 'policy_sentence': 37 chunks indexed
+Collection 'policy_sentence': 36 chunks indexed
   strategy=sentence-based, group_size=2 sentences
 
 Spot-check — 'cancellation fee policy'
-  [policy_fixed]  sim=0.4237  snippet: 'Patients must cancel or reschedule at least 4 hours before the scheduled appoint'
-  [policy_sentence]  sim=0.3492  snippet: 'Patients must cancel or reschedule at least 4 hours before the scheduled appoint'
+  [policy_fixed]  sim=0.4232  snippet: 'Patients must cancel or reschedule at least 4 hours before the scheduled appoint'
+  [policy_sentence]  sim=0.3484  snippet: 'Patients must cancel or reschedule at least 4 hours before the scheduled appoint'
 
 Seeding complete. ChromaDB written to: /Users/swveerl/Desktop/capstone-project/practo-project/data/.chroma
 ============================================================

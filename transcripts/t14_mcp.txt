@@ -1,17 +1,25 @@
 === MCP Server: tools/list ===
 {
-  "name": "check_appointment_status",
-  "description": "Look up a Practo clinic appointment by its record ID and return the appointment's current status, consultation fee (INR), follow-up requirement, and a computed escalation_score in [0, 1]. The escalation_score combines follow_up_required (60% weight) with a recency signal derived from days_since_created (40% weight). An escalate flag is set True when escalation_score >= 0.60, indicating the case should be reviewed by the AP lead. Returns found=False with an error message if the record_id is unknown.",
-  "inputSchema": {
-    "type": "object",
-    "properties": {
-      "record_id": {
-        "type": "string",
-        "description": "Appointment record identifier in the format APT-XXXX (e.g. 'APT-0042'). Case-insensitive."
+  "jsonrpc": "2.0",
+  "id": "1",
+  "result": {
+    "tools": [
+      {
+        "name": "check_appointment_status",
+        "description": "Look up a Practo clinic appointment by its record ID and return the appointment's current status, consultation fee (INR), follow-up requirement, and a computed escalation_score in [0, 1]. The escalation_score combines follow_up_required (60% weight) with a recency signal derived from days_since_created (40% weight). An escalate flag is set True when escalation_score >= 0.60, indicating the case should be reviewed by the AP lead. Returns found=False with an error message if the record_id is unknown.",
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "record_id": {
+              "type": "string",
+              "description": "Appointment record identifier in the format APT-XXXX (e.g. 'APT-0042'). Case-insensitive."
+            }
+          },
+          "required": [
+            "record_id"
+          ]
+        }
       }
-    },
-    "required": [
-      "record_id"
     ]
   }
 }
@@ -19,7 +27,7 @@
 === MCP Client: tools/call for 4 record IDs ===
 {
   "jsonrpc": "2.0",
-  "id": "60ee9850-8ddc-459f-ad4b-ec4c927798b4",
+  "id": "3696f287-5ca0-437a-81d1-cfc0fd4c7940",
   "result": {
     "content": [
       {
@@ -43,7 +51,7 @@
 }
 {
   "jsonrpc": "2.0",
-  "id": "24f967b7-6756-4054-8641-11895422792b",
+  "id": "20414b99-e2b6-4df8-b154-2d2310bf01eb",
   "result": {
     "content": [
       {
@@ -67,7 +75,7 @@
 }
 {
   "jsonrpc": "2.0",
-  "id": "43734a88-a20f-49f3-bfa4-e4c655619448",
+  "id": "c4be168c-965a-41d2-95bc-c983778e7511",
   "result": {
     "content": [
       {
@@ -91,7 +99,7 @@
 }
 {
   "jsonrpc": "2.0",
-  "id": "339dc99f-28b5-422a-a712-31bb87cd6a87",
+  "id": "2d08727f-f046-4a9b-83e2-1102124c6d87",
   "result": {
     "content": [
       {

@@ -9,20 +9,20 @@ Layer 2: Cosine similarity >= threshold
 
 In-scope queries (expect kw_gate=PASS, high sim)
 ----------------------------------------------------------------------
-  sim=0.3775  kw_gate=PASS  |  How do I cancel or reschedule my appointment?
-  sim=0.4159  kw_gate=PASS  |  What are the consultation fees for Cardiology?
-  sim=0.3583  kw_gate=PASS  |  How long do blood test results take?
+  sim=0.3767  kw_gate=PASS  |  How do I cancel or reschedule my appointment?
+  sim=0.4131  kw_gate=PASS  |  What are the consultation fees for Cardiology?
+  sim=0.3582  kw_gate=PASS  |  How long do blood test results take?
 
 Out-of-scope queries (expect kw_gate=FAIL, low sim)
 ----------------------------------------------------------------------
-  sim=0.2626  kw_gate=FAIL  |  What is the best cricket stadium in India?
-  sim=0.2878  kw_gate=FAIL  |  How do I apply for a bank loan?
+  sim=0.2710  kw_gate=FAIL  |  What is the best cricket stadium in India?
+  sim=0.2875  kw_gate=FAIL  |  How do I apply for a bank loan?
 
-In-scope    scores : [0.3775, 0.4159, 0.3583]
-Out-of-scope scores: [0.2626, 0.2878]
-Min in-scope       : 0.3583
-Max out-of-scope   : 0.2878
-Midpoint gap       : 0.3231
+In-scope    scores : [0.3767, 0.4131, 0.3582]
+Out-of-scope scores: [0.271, 0.2875]
+Min in-scope       : 0.3582
+Max out-of-scope   : 0.2875
+Midpoint gap       : 0.3228
 Chosen threshold   : 0.1800  (from app/config.py)
 
 Two-layer verdict for each query:

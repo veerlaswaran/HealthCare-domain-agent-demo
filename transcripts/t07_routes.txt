@@ -6,7 +6,7 @@ Both RAG and Appointment branches are exercised below.
 =================================================================
   ROUTE: RAG  |  Policy query — cancellation policy
 =================================================================
-  Session : bcd74f9f-17ef-403b-950a-fe5638fd3128
+  Session : de73ff1f-5cda-4327-8179-9d843fd061d6
   Turn    : 1
   Route   : rag
   Query   : 'How do I cancel my appointment without paying a cancellation fee?'
@@ -15,17 +15,17 @@ Both RAG and Appointment branches are exercised below.
 
     Based on Practo clinic policy (top 3 relevant section(s)):
     
-    [1] (source: cancellation_rescheduling_policy, similarity: 0.4645)
+    [1] (source: cancellation_rescheduling_policy, similarity: 0.4644)
     Patients must cancel or reschedule at least 4 hours before the scheduled appointment time
     to avoid a late-cancellation fee. Cancellations made within 4 hours of the appointment
     attract a cancellation
     
-    [2] (source: cancellation_rescheduling_policy, similarity: 0.1751)
+    [2] (source: cancellation_rescheduling_policy, similarity: 0.1749)
     e than 4 hours in advance and can be done up to twice per appointment without penalty. If
     a patient does not show up without prior notice, the slot is marked as No-Show and any
     prepaid consultation fe
     
-    [3] (source: cancellation_rescheduling_policy, similarity: 0.153)
+    [3] (source: cancellation_rescheduling_policy, similarity: 0.1527)
     the appointment attract a cancellation charge of ₹100, which is deducted from any prepaid
     amount before refund. Rescheduling is free of charge if requested more than 4 hours in
     advance and can be don
@@ -33,10 +33,10 @@ Both RAG and Appointment branches are exercised below.
     Note: This response is assembled from the knowledge base under MOCK_LLM mode. No language model inference was performed.
 
   RAG hits (top 3):
-    [0.4645] cancellation_rescheduling_policy — 'Patients must cancel or reschedule at least 4 hours before the schedul'
-    [0.1751] cancellation_rescheduling_policy — 'e than 4 hours in advance and can be done up to twice per appointment '
-    [0.1530] cancellation_rescheduling_policy — 'the appointment attract a cancellation charge of ₹100, which is deduct'
-  Top similarity : 0.4645
+    [0.4644] cancellation_rescheduling_policy — 'Patients must cancel or reschedule at least 4 hours before the schedul'
+    [0.1749] cancellation_rescheduling_policy — 'e than 4 hours in advance and can be done up to twice per appointment '
+    [0.1527] cancellation_rescheduling_policy — 'the appointment attract a cancellation charge of ₹100, which is deduct'
+  Top similarity : 0.4644
   Grounded       : True
 
   Guardrail events:
@@ -46,7 +46,7 @@ Both RAG and Appointment branches are exercised below.
 =================================================================
   ROUTE: RAG  |  Policy query — telemedicine eligibility
 =================================================================
-  Session : bcd74f9f-17ef-403b-950a-fe5638fd3128
+  Session : de73ff1f-5cda-4327-8179-9d843fd061d6
   Turn    : 2
   Route   : rag
   Query   : 'Is telemedicine available for Cardiology follow-ups?'
@@ -55,7 +55,7 @@ Both RAG and Appointment branches are exercised below.
 
     Based on Practo clinic policy (top 3 relevant section(s)):
     
-    [1] (source: telemedicine_eligibility, similarity: 0.3547)
+    [1] (source: telemedicine_eligibility, similarity: 0.3517)
     Telemedicine consultations are available for General Medicine, Dermatology, and
     Pediatrics; Cardiology and Orthopedics require in-person visits for first-time patients
     due to the need for physical exa
@@ -65,7 +65,7 @@ Both RAG and Appointment branches are exercised below.
     citizen concessions. Follow-up discounts do not apply to telemedicine-only patients
     seeking an in-person follow-up
     
-    [3] (source: follow_up_visit_discount_policy, similarity: 0.2201)
+    [3] (source: follow_up_visit_discount_policy, similarity: 0.222)
     A follow-up visit is defined as a consultation with the same doctor for the same
     presenting condition within 7 calendar days of the original appointment. The follow-up
     discount is 20 % off the standar
@@ -73,10 +73,10 @@ Both RAG and Appointment branches are exercised below.
     Note: This response is assembled from the knowledge base under MOCK_LLM mode. No language model inference was performed.
 
   RAG hits (top 3):
-    [0.3547] telemedicine_eligibility — 'Telemedicine consultations are available for General Medicine, Dermato'
+    [0.3517] telemedicine_eligibility — 'Telemedicine consultations are available for General Medicine, Dermato'
     [0.2317] follow_up_visit_discount_policy — 'unt is not combinable with insurance cashless claims but can be used a'
-    [0.2201] follow_up_visit_discount_policy — 'A follow-up visit is defined as a consultation with the same doctor fo'
-  Top similarity : 0.3547
+    [0.2220] follow_up_visit_discount_policy — 'A follow-up visit is defined as a consultation with the same doctor fo'
+  Top similarity : 0.3517
   Grounded       : True
 
   Guardrail events:
@@ -86,7 +86,7 @@ Both RAG and Appointment branches are exercised below.
 =================================================================
   ROUTE: APPOINTMENT  |  Explicit APT-ID — APT-0008 (follow_up=True)
 =================================================================
-  Session : b29356f0-b654-42ef-ac65-7ca2acdb5dac
+  Session : 3ed6c037-4311-452d-b2d9-94d9e8622f1a
   Turn    : 1
   Route   : appointment
   Query   : 'What is the status of appointment APT-0008?'
@@ -112,7 +112,7 @@ Both RAG and Appointment branches are exercised below.
 =================================================================
   ROUTE: APPOINTMENT  |  Explicit APT-ID — APT-0001 (follow_up=False)
 =================================================================
-  Session : b29356f0-b654-42ef-ac65-7ca2acdb5dac
+  Session : 3ed6c037-4311-452d-b2d9-94d9e8622f1a
   Turn    : 2
   Route   : appointment
   Query   : 'Can you check appointment APT-0001 for me?'
@@ -138,7 +138,7 @@ Both RAG and Appointment branches are exercised below.
 =================================================================
   ROUTE: APPOINTMENT  |  Keyword intent, no ID provided (graceful ask)
 =================================================================
-  Session : a4f2d8c3-08c7-4999-bc4a-a98ee9485646
+  Session : 59222ad8-88b4-4a35-95c2-65631472f924
   Turn    : 1
   Route   : appointment
   Query   : 'I want to check the status of my cancelled booking'
