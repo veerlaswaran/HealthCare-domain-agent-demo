@@ -1,0 +1,68 @@
+================================================================================
+Practo — Chunking Strategy Evaluation (Precision@3 / Recall@3)
+Queries: 5  |  k=3
+================================================================================
+
+Collection: policy_fixed  (k=3)
+--------------------------------------------------------------------------------
+  Q: 'How do I cancel my appointment without paying a fee?'
+     relevant      : ['cancellation_rescheduling_policy']
+     retrieved     : ['cancellation_rescheduling_policy', 'follow_up_visit_discount_policy']
+     Precision@3  : 0.500   Recall@3: 1.000
+  Q: 'What is the consultation fee for a Cardiology visit?'
+     relevant      : ['consultation_fee_structure']
+     retrieved     : ['home_visit_eligibility', 'follow_up_visit_discount_policy']
+     Precision@3  : 0.000   Recall@3: 0.000
+  Q: 'Can I get a prescription refill without visiting the cl'
+     relevant      : ['prescription_refill_policy']
+     retrieved     : ['prescription_refill_policy']
+     Precision@3  : 1.000   Recall@3: 1.000
+  Q: 'How long does it take to get blood test results?'
+     relevant      : ['lab_test_turnaround_times']
+     retrieved     : ['lab_test_turnaround_times']
+     Precision@3  : 1.000   Recall@3: 1.000
+  Q: 'Is telemedicine available for Orthopedics?'
+     relevant      : ['telemedicine_eligibility']
+     retrieved     : ['telemedicine_eligibility', 'home_visit_eligibility']
+     Precision@3  : 0.500   Recall@3: 1.000
+
+  Mean Precision@3: 0.600
+  Mean Recall@3   : 0.800
+
+Collection: policy_sentence  (k=3)
+--------------------------------------------------------------------------------
+  Q: 'How do I cancel my appointment without paying a fee?'
+     relevant      : ['cancellation_rescheduling_policy']
+     retrieved     : ['cancellation_rescheduling_policy', 'follow_up_visit_discount_policy']
+     Precision@3  : 0.500   Recall@3: 1.000
+  Q: 'What is the consultation fee for a Cardiology visit?'
+     relevant      : ['consultation_fee_structure']
+     retrieved     : ['follow_up_visit_discount_policy', 'home_visit_eligibility', 'telemedicine_eligibility']
+     Precision@3  : 0.000   Recall@3: 0.000
+  Q: 'Can I get a prescription refill without visiting the cl'
+     relevant      : ['prescription_refill_policy']
+     retrieved     : ['prescription_refill_policy', 'cancellation_rescheduling_policy']
+     Precision@3  : 0.500   Recall@3: 1.000
+  Q: 'How long does it take to get blood test results?'
+     relevant      : ['lab_test_turnaround_times']
+     retrieved     : ['lab_test_turnaround_times', 'patient_data_privacy_policy']
+     Precision@3  : 0.500   Recall@3: 1.000
+  Q: 'Is telemedicine available for Orthopedics?'
+     relevant      : ['telemedicine_eligibility']
+     retrieved     : ['telemedicine_eligibility']
+     Precision@3  : 1.000   Recall@3: 1.000
+
+  Mean Precision@3: 0.500
+  Mean Recall@3   : 0.800
+
+================================================================================
+Summary
+================================================================================
+  Strategy                 Mean P@3   Mean R@3
+  ------------------------------------------
+  policy_fixed                0.600      0.800
+  policy_sentence             0.500      0.800
+
+Recommendation:
+  Deploy 'policy_fixed'. It achieved Mean P@3=0.600 and Mean R@3=0.800, outperforming 'policy_sentence' (P@3=0.500, R@3=0.800). For a patient-support agent, recall matters more than precision because missing a relevant policy is worse than surfacing a mildly off-topic chunk.
+================================================================================

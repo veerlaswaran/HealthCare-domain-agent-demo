@@ -1,0 +1,115 @@
+=== MCP Server: tools/list ===
+{
+  "name": "check_appointment_status",
+  "description": "Look up a Practo clinic appointment by its record ID and return the appointment's current status, consultation fee (INR), follow-up requirement, and a computed escalation_score in [0, 1]. The escalation_score combines follow_up_required (60% weight) with a recency signal derived from days_since_created (40% weight). An escalate flag is set True when escalation_score >= 0.60, indicating the case should be reviewed by the AP lead. Returns found=False with an error message if the record_id is unknown.",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "record_id": {
+        "type": "string",
+        "description": "Appointment record identifier in the format APT-XXXX (e.g. 'APT-0042'). Case-insensitive."
+      }
+    },
+    "required": [
+      "record_id"
+    ]
+  }
+}
+
+=== MCP Client: tools/call for 4 record IDs ===
+{
+  "jsonrpc": "2.0",
+  "id": "60ee9850-8ddc-459f-ad4b-ec4c927798b4",
+  "result": {
+    "content": [
+      {
+        "type": "tool_result",
+        "tool": "check_appointment_status",
+        "result": {
+          "found": true,
+          "record_id": "APT-0008",
+          "category": "Dermatology",
+          "status": "No-Show",
+          "consultation_fee_inr": 1300,
+          "days_since_created": 17,
+          "follow_up_required": true,
+          "escalation_score": 0.8267,
+          "escalate": true,
+          "error": null
+        }
+      }
+    ]
+  }
+}
+{
+  "jsonrpc": "2.0",
+  "id": "24f967b7-6756-4054-8641-11895422792b",
+  "result": {
+    "content": [
+      {
+        "type": "tool_result",
+        "tool": "check_appointment_status",
+        "result": {
+          "found": true,
+          "record_id": "APT-0001",
+          "category": "Dermatology",
+          "status": "Scheduled",
+          "consultation_fee_inr": 1000,
+          "days_since_created": 7,
+          "follow_up_required": false,
+          "escalation_score": 0.0933,
+          "escalate": false,
+          "error": null
+        }
+      }
+    ]
+  }
+}
+{
+  "jsonrpc": "2.0",
+  "id": "43734a88-a20f-49f3-bfa4-e4c655619448",
+  "result": {
+    "content": [
+      {
+        "type": "tool_result",
+        "tool": "check_appointment_status",
+        "result": {
+          "found": true,
+          "record_id": "APT-0028",
+          "category": "Cardiology",
+          "status": "Scheduled",
+          "consultation_fee_inr": 1550,
+          "days_since_created": 24,
+          "follow_up_required": true,
+          "escalation_score": 0.92,
+          "escalate": true,
+          "error": null
+        }
+      }
+    ]
+  }
+}
+{
+  "jsonrpc": "2.0",
+  "id": "339dc99f-28b5-422a-a712-31bb87cd6a87",
+  "result": {
+    "content": [
+      {
+        "type": "tool_result",
+        "tool": "check_appointment_status",
+        "result": {
+          "found": false,
+          "record_id": "APT-ZZZZ",
+          "category": null,
+          "status": null,
+          "consultation_fee_inr": null,
+          "days_since_created": null,
+          "follow_up_required": null,
+          "escalation_score": null,
+          "escalate": null,
+          "error": "No appointment found with record_id='APT-ZZZZ'"
+        }
+      }
+    ]
+  }
+}

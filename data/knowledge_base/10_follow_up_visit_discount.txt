@@ -1,0 +1,3 @@
+source: follow_up_visit_discount_policy
+
+A follow-up visit is defined as a consultation with the same doctor for the same presenting condition within 7 calendar days of the original appointment. The follow-up discount is 20 % off the standard consultation fee for the relevant specialty and is applied automatically at checkout when the system detects an eligible prior appointment. To qualify, the follow-up must be booked under the same patient profile and linked to the original appointment reference number. The discount is not combinable with insurance cashless claims but can be used alongside senior-citizen concessions. Follow-up discounts do not apply to telemedicine-only patients seeking an in-person follow-up for the first time, nor to emergency visits.

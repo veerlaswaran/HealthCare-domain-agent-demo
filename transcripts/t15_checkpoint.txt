@@ -1,0 +1,40 @@
+=================================================================
+Task 15 — LangGraph SQLite Checkpointing Demo
+Checkpoint DB: /Users/swveerl/Desktop/capstone-project/practo-project/data/checkpoints.sqlite
+=================================================================
+
+[Phase A+B] First invoke — thread_id='demo-checkpoint-thread-001'
+  Query: 'What is the status of appointment APT-0008?'
+  interrupt_after=['classify_intent']
+
+  [EXEC] Node 'guardrail_input' executed (total calls: 1)
+  [EXEC] Node 'classify_intent' executed (total calls: 1)
+
+  Run INTERRUPTED after classify_intent.
+  Nodes executed so far: ['guardrail_input', 'classify_intent']
+  intent resolved to: 'appointment'
+  record_id resolved to: 'APT-0008'
+  Checkpoint persisted to: /Users/swveerl/Desktop/capstone-project/practo-project/data/checkpoints.sqlite
+
+[Phase C] Resume same thread_id='demo-checkpoint-thread-001'
+  Passing None as input — LangGraph loads state from checkpoint.
+
+  [EXEC] Node 'appointment_tool' executed (total calls: 1)
+  [EXEC] Node 'format_response' executed (total calls: 1)
+  [format_response] Final answer: APT APT-0008: No-Show, fee=1300, escalate=True
+
+  Run COMPLETED.
+
+  Execution counts — PROOF that phases 1 nodes NOT re-run:
+  Node                    Phase 1 calls  Phase 2 calls  Re-executed?
+  -----------------------------------------------------------------
+  guardrail_input                     1              0            no
+  classify_intent                     1              0            no
+  rag_tool                            0              0             -
+  appointment_tool                    0              1             -
+  format_response                     0              1             -
+
+  Final answer: APT APT-0008: No-Show, fee=1300, escalate=True
+
+  All assertions PASSED — checkpointing works correctly.
+=================================================================

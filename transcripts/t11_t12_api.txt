@@ -1,0 +1,22 @@
+--- GET /health -> 200 ---
+  {"status": "ok", "chroma_fixed_count": 61, "chroma_sentence_count": 37, "kb_documents": 13, "mock_llm": true, "offline_mode": true, "details": {}}
+--- POST /ask -> 200 ---
+  route=rag grounded=True trace_id=6ff494f6-f008-4f...
+  guardrail_events=['clean']
+  answer=Based on Practo clinic policy (top 3 relevant section(s)):
+
+[1] (source: cancellation_rescheduling_p
+--- POST /ask -> 200 ---
+  route=appointment grounded=None trace_id=aaa2549d-96a8-4b...
+  guardrail_events=['clean']
+  answer=Appointment APT-0008: Status is No-Show, Category: Dermatology, Consultation fee: INR 1300, Created 
+--- POST /ask -> 200 ---
+  route=rag grounded=True trace_id=aeb4e0c6-2cb2-44...
+  guardrail_events=['pii_masked']
+  answer=Based on Practo clinic policy (top 3 relevant section(s)):
+
+[1] (source: cancellation_rescheduling_p
+--- GET /appointments/APT-0028 -> 200 ---
+  {"found": true, "record_id": "APT-0028", "category": "Cardiology", "status": "Scheduled", "consultation_fee_inr": 1550, "days_since_created": 24, "follow_up_required": true, "escalation_score": 0.92, 
+--- POST /add-document -> 200 ---
+  {"source_name": "referral_policy", "chunks_fixed": 60, "chunks_sentence": 37, "message": "Document 'referral_policy' added. Full re-index complete: 60 fixed chunks, 37 sentence chunks across 13 docume

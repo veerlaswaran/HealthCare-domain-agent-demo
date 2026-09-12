@@ -1,0 +1,57 @@
+======================================================================
+Grounded Generation Demo  |  collection: policy_fixed
+Embedding: TF-IDF (offline)
+Threshold: 0.18
+======================================================================
+
+[IN-SCOPE] Q: How do I cancel my appointment without paying a fee?
+  top_score=0.3133  grounded=True
+  top_source=cancellation_rescheduling_policy
+  A: Based on Practo clinic policy (top 3 relevant section(s)):
+
+[1] (source: cancellation_rescheduling_policy, similarity: 0.3133)
+Patients must cancel or reschedule at least 4 hours before the scheduled
+
+
+[IN-SCOPE] Q: What is the consultation fee for a Cardiology visit?
+  top_score=0.3297  grounded=True
+  top_source=home_visit_eligibility
+  A: Based on Practo clinic policy (top 3 relevant section(s)):
+
+[1] (source: home_visit_eligibility, similarity: 0.3297)
+nts within 2 weeks of discharge who have been referred by a Practo doctor. A home-v
+
+
+[IN-SCOPE] Q: Can I get a prescription refill without visiting the clinic?
+  top_score=0.2637  grounded=True
+  top_source=prescription_refill_policy
+  A: Based on Practo clinic policy (top 3 relevant section(s)):
+
+[1] (source: prescription_refill_policy, similarity: 0.2637)
+Prescription refills for chronic-condition medications (such as antihypertensiv
+
+
+[IN-SCOPE] Q: How long does it take to get blood test results?
+  top_score=0.3785  grounded=True
+  top_source=lab_test_turnaround_times
+  A: Based on Practo clinic policy (top 3 relevant section(s)):
+
+[1] (source: lab_test_turnaround_times, similarity: 0.3785)
+Routine blood-panel results (CBC, lipid profile, blood glucose) are available wi
+
+
+[IN-SCOPE] Q: Is telemedicine available for Orthopedics?
+  top_score=0.3985  grounded=True
+  top_source=telemedicine_eligibility
+  A: Based on Practo clinic policy (top 3 relevant section(s)):
+
+[1] (source: telemedicine_eligibility, similarity: 0.3985)
+Telemedicine consultations are available for General Medicine, Dermatology, and
+P
+
+
+[OUT-OF-SCOPE] Q: What is the best cricket stadium in India?
+  top_score=0.2626  grounded=False
+  top_source=emergency_visit_protocol
+  A: I don't know. Your question does not appear to match any topic covered in the Practo clinic knowledge base.
+

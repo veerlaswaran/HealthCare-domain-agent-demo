@@ -1,0 +1,3 @@
+source: consultation_fee_structure
+
+Consultation fees vary by specialty and are reviewed annually. General Medicine consultations are priced between ₹300 and ₹700; Pediatrics between ₹400 and ₹900; Dermatology between ₹600 and ₹1500; Orthopedics between ₹800 and ₹2000; and Cardiology between ₹1000 and ₹2500. Follow-up visits within 7 days of the original consultation attract a flat 20 % discount on the standard fee for the same specialty. Senior citizens (age 60 and above) receive an additional 10 % concession on all consultation fees. Fees must be settled in full at the time of consultation; partial payments are not accepted at the front desk.

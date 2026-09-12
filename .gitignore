@@ -1,0 +1,26 @@
+# ChromaDB persisted index (rebuilt by seed_kb.py)
+data/.chroma/
+
+# SQLite databases (generated at runtime)
+data/*.db
+data/*.sqlite
+
+# Runtime logs (generated at runtime)
+logs/
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+.venv/
+venv/
+env/
+
+# Environment secrets
+.env
+
+# OS
+.DS_Store
+Thumbs.db

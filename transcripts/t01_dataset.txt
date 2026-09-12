@@ -1,0 +1,34 @@
+============================================================
+Practo Appointment Dataset — Validation Report
+============================================================
+Total records : 100
+
+Records per category:
+  General Medicine         30
+  Cardiology               17
+  Dermatology              18
+  Pediatrics               14
+  Orthopedics              21
+
+Records per status:
+  Scheduled                35
+  Completed                31
+  Cancelled                13
+  No-Show                   8
+  Rescheduled              13
+
+follow_up_required=True : 24 / 100 = 24.0 %
+
+Fee range (INR)         : min=300, max=2350, mean=1006
+
+Sample (first 5 records):
+  record_id    category               status            fee  days  follow_up
+  --------------------------------------------------------------------------
+  APT-0001     Dermatology            Scheduled        1000     7  False
+  APT-0002     Pediatrics             Cancelled         800     2  False
+  APT-0003     General Medicine       Scheduled         450    16  False
+  APT-0004     Dermatology            Cancelled        1450    13  False
+  APT-0005     Dermatology            No-Show           600    24  False
+
+All validation constraints PASSED.
+============================================================

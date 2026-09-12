@@ -1,0 +1,3 @@
+source: lab_test_turnaround_times
+
+Routine blood-panel results (CBC, lipid profile, blood glucose) are available within 24 hours of sample collection. Urine culture and sensitivity reports take 48–72 hours due to incubation requirements. Advanced tests such as thyroid function panels, HbA1c, and liver function tests are returned within 24–36 hours. Histopathology and biopsy reports require 5–7 working days and are dispatched directly to the referring doctor with a copy sent to the patient via email. Urgent same-day results for emergency cases (troponin, D-dimer, blood gas analysis) are available within 2–4 hours and are communicated directly to the treating physician.

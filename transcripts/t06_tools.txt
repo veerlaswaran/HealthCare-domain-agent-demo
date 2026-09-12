@@ -1,0 +1,18 @@
+=======================================================
+Escalation Score Distribution (seed=42, n=100)
+  Formula: 0.6*follow_up + 0.4*(days/30)
+  Threshold: 0.6
+  Escalated: 24/100 (24%)
+
+  P25 : 0.0933
+  P50 : 0.2800
+  P75 : 0.4000
+  P80 : 0.6933
+  P90 : 0.8933
+  min : 0.0000
+  max : 0.9733
+=======================================================
+
+APT-0001: found=True  status=Scheduled  escalation_score=0.0933  escalate=False
+APT-0008: found=True  status=No-Show  escalation_score=0.8267  escalate=True
+APT-ZZZZ: found=False  status=None  escalation_score=None  escalate=None

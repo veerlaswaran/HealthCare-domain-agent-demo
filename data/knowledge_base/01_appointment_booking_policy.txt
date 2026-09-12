@@ -1,0 +1,3 @@
+source: appointment_booking_policy
+
+Patients can book appointments online through the Practo portal, via the mobile app, or by calling the clinic's front-desk between 8 AM and 8 PM on all working days. Walk-in slots are available only for General Medicine and Pediatrics, subject to availability; all specialist consultations must be pre-booked. A valid government-issued photo ID is required at the time of booking and must be presented again at the clinic on the day of the visit. Appointments can be scheduled up to 30 days in advance, and same-day bookings are permitted if a slot is open. Patients who book online receive an SMS and email confirmation within 15 minutes of successful booking.

@@ -1,0 +1,63 @@
+
+Practo Agent — Memory Demonstration (Task 8)
+
+#################################################################
+  TRANSCRIPT A — Multi-turn conversation (state carried across turns)
+#################################################################
+
+  Session ID: c6b18f79-ed84-4ca6-a0e1-349821d28b42
+
+  Turn 1  |  Route: rag
+  Q: 'What is the cancellation policy if I cancel 2 hours before?'
+  A: Based on Practo clinic policy (top 3 relevant section(s)):
+
+[1] (source: cancellation_rescheduling_policy, similarity: 0.4458)
+Patients must cancel or reschedule at least 4 hours before the scheduled appointment time
+to
+
+  Turn 2  |  Route: rag
+  Q: 'And what is the refund timeline for cancelled appointments?'
+  A: Based on Practo clinic policy (top 3 relevant section(s)):
+
+[1] (source: cancellation_rescheduling_policy, similarity: 0.2296)
+the appointment attract a cancellation charge of ₹100, which is deducted from any prepaid
+amo
+  History in context (1 prior turn(s)):
+    T1 [rag]: 'What is the cancellation policy if I cancel 2 hours before?' -> 'Based on Practo clinic policy (top 3 relevant section(s)):  [1] (source: cancell'
+
+  Turn 3  |  Route: appointment
+  Q: 'Also, can you check my appointment APT-0028?'
+  A: Appointment APT-0028: Status is Scheduled, Category: Cardiology, Consultation fee: INR 1550, Created 24 day(s) ago. A follow-up visit is required. Escalation score: 0.92. Escalation is recommended.
+  History in context (2 prior turn(s)):
+    T1 [rag]: 'What is the cancellation policy if I cancel 2 hours before?' -> 'Based on Practo clinic policy (top 3 relevant section(s)):  [1] (source: cancell'
+    T2 [rag]: 'And what is the refund timeline for cancelled appointments?' -> 'Based on Practo clinic policy (top 3 relevant section(s)):  [1] (source: cancell'
+
+  Persisted turns on disk: 3
+    Turn 1 [rag]: 'What is the cancellation policy if I cancel 2 hours bef'
+    Turn 2 [rag]: 'And what is the refund timeline for cancelled appointme'
+    Turn 3 [appointment]: 'Also, can you check my appointment APT-0028?'
+
+#################################################################
+  TRANSCRIPT B — Fresh session (history absent / correctly reset)
+#################################################################
+
+  New session ID: c92dd8cb-2ec1-4b55-b62a-4ec28a57c730
+  History on disk before first turn: []
+
+  Turn 1  |  Route: rag
+  Q: 'How do I book a telemedicine appointment?'
+  A: Based on Practo clinic policy (top 3 relevant section(s)):
+
+[1] (source: follow_up_visit_discount_policy, similarity: 0.2)
+unt is not combinable with insurance cashless claims but can be used alongside senior-
+citizen co
+
+  Persisted turns after Turn 1: 1
+  Turn 1 on disk: 'How do I book a telemedicine appointment?'
+
+  Confirmed: no history from Transcript A leaked into this session.
+
+Memory files written to: logs/memory/
+  Transcript A session file: logs/memory/c6b18f79-ed84-4ca6-a0e1-349821d28b42.json
+
+Demo complete.

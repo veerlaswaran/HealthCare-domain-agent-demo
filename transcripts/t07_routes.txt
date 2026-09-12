@@ -1,0 +1,154 @@
+
+Practo Agent — Route Demonstration (Task 7)
+Both RAG and Appointment branches are exercised below.
+
+
+=================================================================
+  ROUTE: RAG  |  Policy query — cancellation policy
+=================================================================
+  Session : bcd74f9f-17ef-403b-950a-fe5638fd3128
+  Turn    : 1
+  Route   : rag
+  Query   : 'How do I cancel my appointment without paying a cancellation fee?'
+
+  Answer:
+
+    Based on Practo clinic policy (top 3 relevant section(s)):
+    
+    [1] (source: cancellation_rescheduling_policy, similarity: 0.4645)
+    Patients must cancel or reschedule at least 4 hours before the scheduled appointment time
+    to avoid a late-cancellation fee. Cancellations made within 4 hours of the appointment
+    attract a cancellation
+    
+    [2] (source: cancellation_rescheduling_policy, similarity: 0.1751)
+    e than 4 hours in advance and can be done up to twice per appointment without penalty. If
+    a patient does not show up without prior notice, the slot is marked as No-Show and any
+    prepaid consultation fe
+    
+    [3] (source: cancellation_rescheduling_policy, similarity: 0.153)
+    the appointment attract a cancellation charge of ₹100, which is deducted from any prepaid
+    amount before refund. Rescheduling is free of charge if requested more than 4 hours in
+    advance and can be don
+    
+    Note: This response is assembled from the knowledge base under MOCK_LLM mode. No language model inference was performed.
+
+  RAG hits (top 3):
+    [0.4645] cancellation_rescheduling_policy — 'Patients must cancel or reschedule at least 4 hours before the schedul'
+    [0.1751] cancellation_rescheduling_policy — 'e than 4 hours in advance and can be done up to twice per appointment '
+    [0.1530] cancellation_rescheduling_policy — 'the appointment attract a cancellation charge of ₹100, which is deduct'
+  Top similarity : 0.4645
+  Grounded       : True
+
+  Guardrail events:
+    [clean] All checks passed
+
+
+=================================================================
+  ROUTE: RAG  |  Policy query — telemedicine eligibility
+=================================================================
+  Session : bcd74f9f-17ef-403b-950a-fe5638fd3128
+  Turn    : 2
+  Route   : rag
+  Query   : 'Is telemedicine available for Cardiology follow-ups?'
+
+  Answer:
+
+    Based on Practo clinic policy (top 3 relevant section(s)):
+    
+    [1] (source: telemedicine_eligibility, similarity: 0.3547)
+    Telemedicine consultations are available for General Medicine, Dermatology, and
+    Pediatrics; Cardiology and Orthopedics require in-person visits for first-time patients
+    due to the need for physical exa
+    
+    [2] (source: follow_up_visit_discount_policy, similarity: 0.2317)
+    unt is not combinable with insurance cashless claims but can be used alongside senior-
+    citizen concessions. Follow-up discounts do not apply to telemedicine-only patients
+    seeking an in-person follow-up
+    
+    [3] (source: follow_up_visit_discount_policy, similarity: 0.2201)
+    A follow-up visit is defined as a consultation with the same doctor for the same
+    presenting condition within 7 calendar days of the original appointment. The follow-up
+    discount is 20 % off the standar
+    
+    Note: This response is assembled from the knowledge base under MOCK_LLM mode. No language model inference was performed.
+
+  RAG hits (top 3):
+    [0.3547] telemedicine_eligibility — 'Telemedicine consultations are available for General Medicine, Dermato'
+    [0.2317] follow_up_visit_discount_policy — 'unt is not combinable with insurance cashless claims but can be used a'
+    [0.2201] follow_up_visit_discount_policy — 'A follow-up visit is defined as a consultation with the same doctor fo'
+  Top similarity : 0.3547
+  Grounded       : True
+
+  Guardrail events:
+    [clean] All checks passed
+
+
+=================================================================
+  ROUTE: APPOINTMENT  |  Explicit APT-ID — APT-0008 (follow_up=True)
+=================================================================
+  Session : b29356f0-b654-42ef-ac65-7ca2acdb5dac
+  Turn    : 1
+  Route   : appointment
+  Query   : 'What is the status of appointment APT-0008?'
+
+  Answer:
+
+    Appointment APT-0008: Status is No-Show, Category: Dermatology, Consultation fee: INR 1300, Created 17 day(s) ago. A follow-up visit is required. Escalation score: 0.83. Escalation is recommended.
+
+  Appointment detail:
+    record_id         : APT-0008
+    status            : No-Show
+    category          : Dermatology
+    fee (INR)         : 1300
+    days_since_created: 17
+    follow_up_required: True
+    escalation_score  : 0.8267
+    escalate          : True
+
+  Guardrail events:
+    [clean] All checks passed
+
+
+=================================================================
+  ROUTE: APPOINTMENT  |  Explicit APT-ID — APT-0001 (follow_up=False)
+=================================================================
+  Session : b29356f0-b654-42ef-ac65-7ca2acdb5dac
+  Turn    : 2
+  Route   : appointment
+  Query   : 'Can you check appointment APT-0001 for me?'
+
+  Answer:
+
+    Appointment APT-0001: Status is Scheduled, Category: Dermatology, Consultation fee: INR 1000, Created 7 day(s) ago. Escalation score: 0.09.
+
+  Appointment detail:
+    record_id         : APT-0001
+    status            : Scheduled
+    category          : Dermatology
+    fee (INR)         : 1000
+    days_since_created: 7
+    follow_up_required: False
+    escalation_score  : 0.0933
+    escalate          : False
+
+  Guardrail events:
+    [clean] All checks passed
+
+
+=================================================================
+  ROUTE: APPOINTMENT  |  Keyword intent, no ID provided (graceful ask)
+=================================================================
+  Session : a4f2d8c3-08c7-4999-bc4a-a98ee9485646
+  Turn    : 1
+  Route   : appointment
+  Query   : 'I want to check the status of my cancelled booking'
+
+  Answer:
+
+    Please provide an appointment ID (e.g. APT-0042) to check status.
+
+  Guardrail events:
+    [clean] All checks passed
+
+Demo complete. Both route branches demonstrated.
+Log written to logs/agent.jsonl
