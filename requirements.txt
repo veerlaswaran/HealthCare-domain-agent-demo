@@ -1,13 +1,12 @@
-sentence-transformers==5.1.2
+numpy==2.5.3
+sentence-transformers==6.0.1
 chromadb==1.5.9
-fastapi==0.128.8
-uvicorn[standard]==0.39.0
-langgraph==0.6.11
-langchain-core==0.3.86
+fastapi==0.141.1
+uvicorn[standard]==0.52.4
+langgraph==1.2.11
+langchain-core==1.6.3
+langgraph-checkpoint-sqlite==3.1.1
 pydantic==2.13.5
+fastmcp==4.0.3
 httpx==0.28.1
-python-dotenv==1.2.1
-numpy==2.0.2
-langgraph-checkpoint-sqlite==2.0.11
-# fastmcp requires Python >=3.10; install manually if using Python 3.10+:
-# pip install fastmcp==2.5.2
+python-dotenv==1.2.3

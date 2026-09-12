@@ -1,123 +1,67 @@
-=== MCP Server: tools/list ===
-{
-  "jsonrpc": "2.0",
-  "id": "1",
-  "result": {
-    "tools": [
-      {
-        "name": "check_appointment_status",
-        "description": "Look up a Practo clinic appointment by its record ID and return the appointment's current status, consultation fee (INR), follow-up requirement, and a computed escalation_score in [0, 1]. The escalation_score combines follow_up_required (60% weight) with a recency signal derived from days_since_created (40% weight). An escalate flag is set True when escalation_score >= 0.60, indicating the case should be reviewed by the AP lead. Returns found=False with an error message if the record_id is unknown.",
-        "inputSchema": {
-          "type": "object",
-          "properties": {
-            "record_id": {
-              "type": "string",
-              "description": "Appointment record identifier in the format APT-XXXX (e.g. 'APT-0042'). Case-insensitive."
-            }
-          },
-          "required": [
-            "record_id"
-          ]
-        }
-      }
-    ]
-  }
-}
+=================================================================
+Practo MCP Client — Task 14
+Server: http://127.0.0.1:8001/mcp
+=================================================================
 
-=== MCP Client: tools/call for 4 record IDs ===
-{
-  "jsonrpc": "2.0",
-  "id": "3696f287-5ca0-437a-81d1-cfc0fd4c7940",
-  "result": {
-    "content": [
-      {
-        "type": "tool_result",
-        "tool": "check_appointment_status",
-        "result": {
-          "found": true,
-          "record_id": "APT-0008",
-          "category": "Dermatology",
-          "status": "No-Show",
-          "consultation_fee_inr": 1300,
-          "days_since_created": 17,
-          "follow_up_required": true,
-          "escalation_score": 0.8267,
-          "escalate": true,
-          "error": null
-        }
-      }
-    ]
-  }
-}
-{
-  "jsonrpc": "2.0",
-  "id": "20414b99-e2b6-4df8-b154-2d2310bf01eb",
-  "result": {
-    "content": [
-      {
-        "type": "tool_result",
-        "tool": "check_appointment_status",
-        "result": {
-          "found": true,
-          "record_id": "APT-0001",
-          "category": "Dermatology",
-          "status": "Scheduled",
-          "consultation_fee_inr": 1000,
-          "days_since_created": 7,
-          "follow_up_required": false,
-          "escalation_score": 0.0933,
-          "escalate": false,
-          "error": null
-        }
-      }
-    ]
-  }
-}
-{
-  "jsonrpc": "2.0",
-  "id": "c4be168c-965a-41d2-95bc-c983778e7511",
-  "result": {
-    "content": [
-      {
-        "type": "tool_result",
-        "tool": "check_appointment_status",
-        "result": {
-          "found": true,
-          "record_id": "APT-0028",
-          "category": "Cardiology",
-          "status": "Scheduled",
-          "consultation_fee_inr": 1550,
-          "days_since_created": 24,
-          "follow_up_required": true,
-          "escalation_score": 0.92,
-          "escalate": true,
-          "error": null
-        }
-      }
-    ]
-  }
-}
-{
-  "jsonrpc": "2.0",
-  "id": "2d08727f-f046-4a9b-83e2-1102124c6d87",
-  "result": {
-    "content": [
-      {
-        "type": "tool_result",
-        "tool": "check_appointment_status",
-        "result": {
-          "found": false,
-          "record_id": "APT-ZZZZ",
-          "category": null,
-          "status": null,
-          "consultation_fee_inr": null,
-          "days_since_created": null,
-          "follow_up_required": null,
-          "escalation_score": null,
-          "escalate": null,
-          "error": "No appointment found with record_id='APT-ZZZZ'"
-        }
-      }
-    ]
-  }
-}
+[Step 1] tools/list
+  Discovered 1 tool(s):
+    name       : check_appointment_status
+    description: Look up a Practo clinic appointment by its record ID and return the
+appointment's current ...
+
+[Step 2] tools/call — check_appointment_status
+
+  record_id = APT-0008
+  -------------------------------------------------------
+    found                    : True
+    record_id                : APT-0008
+    category                 : Dermatology
+    status                   : No-Show
+    consultation_fee_inr     : 1300
+    days_since_created       : 17
+    follow_up_required       : True
+    escalation_score         : 0.8267
+    escalate                 : True
+    error                    : None
+
+  record_id = APT-0001
+  -------------------------------------------------------
+    found                    : True
+    record_id                : APT-0001
+    category                 : Dermatology
+    status                   : Scheduled
+    consultation_fee_inr     : 1000
+    days_since_created       : 7
+    follow_up_required       : False
+    escalation_score         : 0.0933
+    escalate                 : False
+    error                    : None
+
+  record_id = APT-0028
+  -------------------------------------------------------
+    found                    : True
+    record_id                : APT-0028
+    category                 : Cardiology
+    status                   : Scheduled
+    consultation_fee_inr     : 1550
+    days_since_created       : 24
+    follow_up_required       : True
+    escalation_score         : 0.92
+    escalate                 : True
+    error                    : None
+
+  record_id = APT-ZZZZ
+  -------------------------------------------------------
+    found                    : False
+    record_id                : APT-ZZZZ
+    category                 : None
+    status                   : None
+    consultation_fee_inr     : None
+    days_since_created       : None
+    follow_up_required       : None
+    escalation_score         : None
+    escalate                 : None
+    error                    : No appointment found with record_id='APT-ZZZZ'
+
+MCP client demo complete.
+=================================================================
