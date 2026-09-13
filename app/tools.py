@@ -134,7 +134,13 @@ def check_appointment_status(record_id: str) -> dict:
 # Tool 2 — retrieve_policy  (RAG wrapper)
 # ---------------------------------------------------------------------------
 
-def retrieve_policy(query: str, collection_name: str = COLLECTION_FIXED) -> dict:
+def retrieve_policy(
+    query: str,
+    collection_name: str = COLLECTION_FIXED,
+    *,
+    user_query: str | None = None,
+    conversation_context: str = "",
+) -> dict:
     """
     Answer a policy question using the RAG core (Task 3-5).
 
@@ -146,7 +152,12 @@ def retrieve_policy(query: str, collection_name: str = COLLECTION_FIXED) -> dict
         grounded_answer() dict — see app/rag.py for schema.
     """
     from app.rag import grounded_answer
-    return grounded_answer(query, collection_name=collection_name)  # type: ignore[arg-type]
+    return grounded_answer(
+        query,
+        collection_name=collection_name,  # type: ignore[arg-type]
+        user_query=user_query,
+        conversation_context=conversation_context,
+    )
 
 
 # ---------------------------------------------------------------------------

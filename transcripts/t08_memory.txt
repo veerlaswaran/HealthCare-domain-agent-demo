@@ -5,23 +5,23 @@ Practo Agent — Memory Demonstration (Task 8)
   TRANSCRIPT A — Multi-turn conversation (state carried across turns)
 #################################################################
 
-  Session ID: f65ebfa3-c59d-49f0-8b00-e1eb010bc3a5
+  Session ID: ef1cf25e-7989-4481-8bc6-878205bc2dba
 
   Turn 1  |  Route: rag
   Q: 'What is the cancellation policy if I cancel 2 hours before?'
   A: Based on Practo clinic policy (top 3 relevant section(s)):
 
-[1] (source: cancellation_rescheduling_policy, similarity: 0.4449)
+[1] (source: cancellation_rescheduling_policy, similarity: 0.678)
 Patients must cancel or reschedule at least 4 hours before the scheduled appointment time
-to
+to a
 
   Turn 2  |  Route: rag
-  Q: 'And what is the refund timeline for cancelled appointments?'
+  Q: 'How long do refunds take?'
   A: Based on Practo clinic policy (top 3 relevant section(s)):
 
-[1] (source: cancellation_rescheduling_policy, similarity: 0.2314)
-the appointment attract a cancellation charge of ₹100, which is deducted from any prepaid
-amo
+[1] (source: cancellation_rescheduling_policy, similarity: 0.676)
+No-Show and any prepaid consultation fee is forfeited. Refunds for eligible cancellations
+are
   History in context (1 prior turn(s)):
     T1 [rag]: 'What is the cancellation policy if I cancel 2 hours before?' -> 'Based on Practo clinic policy (top 3 relevant section(s)):  [1] (source: cancell'
 
@@ -30,27 +30,27 @@ amo
   A: Appointment APT-0028: Status is Scheduled, Category: Cardiology, Consultation fee: INR 1550, Created 24 day(s) ago. A follow-up visit is required. Escalation score: 0.92. Escalation is recommended.
   History in context (2 prior turn(s)):
     T1 [rag]: 'What is the cancellation policy if I cancel 2 hours before?' -> 'Based on Practo clinic policy (top 3 relevant section(s)):  [1] (source: cancell'
-    T2 [rag]: 'And what is the refund timeline for cancelled appointments?' -> 'Based on Practo clinic policy (top 3 relevant section(s)):  [1] (source: cancell'
+    T2 [rag]: 'How long do refunds take?' -> 'Based on Practo clinic policy (top 3 relevant section(s)):  [1] (source: cancell'
 
   Persisted turns on disk: 3
     Turn 1 [rag]: 'What is the cancellation policy if I cancel 2 hours bef'
-    Turn 2 [rag]: 'And what is the refund timeline for cancelled appointme'
+    Turn 2 [rag]: 'How long do refunds take?'
     Turn 3 [appointment]: 'Also, can you check my appointment APT-0028?'
 
 #################################################################
   TRANSCRIPT B — Fresh session (history absent / correctly reset)
 #################################################################
 
-  New session ID: e3b9b585-72cc-4949-a2b4-b2e90b1ad7ca
+  New session ID: abb190aa-7ed0-45b2-b7bc-5f6c56c243e6
   History on disk before first turn: []
 
   Turn 1  |  Route: rag
   Q: 'How do I book a telemedicine appointment?'
   A: Based on Practo clinic policy (top 3 relevant section(s)):
 
-[1] (source: follow_up_visit_discount_policy, similarity: 0.2)
-unt is not combinable with insurance cashless claims but can be used alongside senior-
-citizen co
+[1] (source: telemedicine_eligibility, similarity: 0.6886)
+Telemedicine consultations are available for General Medicine, Dermatology, and
+Pediatrics; Cardiolog
 
   Persisted turns after Turn 1: 1
   Turn 1 on disk: 'How do I book a telemedicine appointment?'
@@ -58,6 +58,6 @@ citizen co
   Confirmed: no history from Transcript A leaked into this session.
 
 Memory files written to: logs/memory/
-  Transcript A session file: logs/memory/f65ebfa3-c59d-49f0-8b00-e1eb010bc3a5.json
+  Transcript A session file: logs/memory/ef1cf25e-7989-4481-8bc6-878205bc2dba.json
 
 Demo complete.

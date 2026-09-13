@@ -3,9 +3,9 @@ Task 7 — LangGraph agent graph.
 
 Graph topology (4 nodes, 1 conditional edge):
 
-    [guardrail_input]
-          |
-          v
+    [guardrail_input] → [resolve_conversation_context]
+                                      |
+                                      v
     [classify_intent]  --conditional--> [appointment_tool]
           |                                     |
           v (default)                           |
@@ -18,7 +18,8 @@ Graph topology (4 nodes, 1 conditional edge):
 
 Nodes:
   guardrail_input   — run input guardrails (PII mask + injection detect)
-  classify_intent   — decide route: "rag" or "appointment"
+  resolve_conversation_context — enriches genuine follow-ups with recent turns
+  classify_intent   — decide route: "conversational", "rag", or "appointment"
   rag_tool          — call retrieve_policy() and ground the answer
   appointment_tool  — call check_appointment_status()
   format_response   — build + validate AgentResponse, persist memory, log
@@ -84,8 +85,13 @@ class AgentState(TypedDict, total=False):
     guardrail_events: list[GuardrailTrace]
     blocked: bool               # True → skip tools, go straight to format
 
+    # After context resolution
+    query_for_retrieval: str    # current query, enriched only for follow-ups
+    conversation_context: str   # recent sanitised user queries for generation
+    topic_query: str            # stable root topic used for chained follow-ups
+
     # After classify node
-    intent: str                 # "rag" | "appointment"
+    intent: str                 # "conversational" | "rag" | "appointment"
     record_id: Optional[str]    # populated when intent == "appointment"
 
     # After tool nodes
@@ -101,6 +107,21 @@ class AgentState(TypedDict, total=False):
 # ---------------------------------------------------------------------------
 
 _APT_ID_RE = re.compile(r"\bAPT-\d{4}\b", re.I)
+_CONVERSATIONAL_RE = re.compile(
+    r"^\s*(?:hi|hello|hey|thanks?|thank you)(?:\s+(?:there|team|portal))?[!,.\s]*$",
+    re.I,
+)
+_FOLLOW_UP_RE = re.compile(
+    r"^\s*(?:and\b|also\b|what about\b|how about\b|how much\b|how long\b|"
+    r"when\b|why\b|where\b|what (?:about|is) (?:that|it)\b|"
+    r"(?:can|is|does) (?:that|it)\b)",
+    re.I,
+)
+_BOOKING_TIMING_RE = re.compile(
+    r"(?:\b(?:how long|when|time)\b.*\b(?:get|book|booking|appointment)\b|"
+    r"\b(?:get|book|booking|appointment)\b.*\b(?:how long|when|time)\b)",
+    re.I,
+)
 
 # Keywords that signal lookup/status intent (NOT policy questions)
 # These must co-occur to trigger appointment routing without an explicit ID.
@@ -119,13 +140,16 @@ def _classify(query: str) -> tuple[str, Optional[str]]:
     Return (intent, record_id).
 
     Rules (applied in order):
-      1. If the query contains an APT-XXXX pattern → "appointment"
-      2. If the query contains ≥1 lookup-action keyword AND ≥1 appointment-
+      1. If the query is a greeting or thanks-only message → "conversational"
+      2. If the query contains an APT-XXXX pattern → "appointment"
+      3. If the query contains ≥1 lookup-action keyword AND ≥1 appointment-
          object keyword → "appointment" (e.g. "check my booking status")
-      3. Otherwise → "rag"  (policy questions fall here even if they mention
+      4. Otherwise → "rag"  (policy questions fall here even if they mention
          'appointment' in passing, e.g. "cancel appointment policy")
     """
     q_lower = query.lower()
+    if _CONVERSATIONAL_RE.fullmatch(query):
+        return "conversational", None
     apt_match = _APT_ID_RE.search(query)
     if apt_match:
         return "appointment", apt_match.group(0).upper()
@@ -167,30 +191,82 @@ def guardrail_input(state: AgentState) -> AgentState:
 
 
 # ---------------------------------------------------------------------------
-# Node 2 — classify_intent
+# Node 2 — resolve_conversation_context
+# ---------------------------------------------------------------------------
+
+def resolve_conversation_context(state: AgentState) -> AgentState:
+    """Use only the immediately preceding relevant turn for a vague follow-up."""
+    query = state["guardrail_result"].sanitised_query
+    history = get_recent_history(state["session_id"], window=3)
+    previous_turn = history[-1] if history else None
+    previous_is_relevant = bool(
+        previous_turn and previous_turn.get("route") in {"rag", "appointment"}
+    )
+    # A message with its own domain topic (for example, "how long will an
+    # appointment take?") stands alone. Only vague, cue-led messages borrow
+    # the immediately previous relevant topic.
+    from app.rag import _passes_domain_gate
+    is_vague_follow_up = _FOLLOW_UP_RE.match(query) and not _passes_domain_gate(query)
+
+    if previous_is_relevant and is_vague_follow_up:
+        # Enrich retrieval with user-authored, already-sanitised context. We do
+        # not feed prior model answers into retrieval, avoiding self-reinforcing
+        # hallucinations or prompt injection through stored output.
+        topic_query = previous_turn.get("topic_query") or previous_turn["query"]
+        query_for_retrieval = f"Previous topic: {topic_query}\nFollow-up: {query}"
+        conversation_context = (
+            f"Earlier topic: {topic_query}\nCurrent follow-up: {query}"
+        )
+    elif _BOOKING_TIMING_RE.search(query):
+        # The KB describes booking confirmation timing explicitly. Add those
+        # terms to disambiguate this from cancellation/refund timing queries.
+        query_for_retrieval = f"{query}\nappointment booking confirmation time"
+        topic_query = query
+        conversation_context = ""
+    else:
+        query_for_retrieval = query
+        topic_query = query
+        conversation_context = ""
+
+    return {
+        **state,
+        "query_for_retrieval": query_for_retrieval,
+        "conversation_context": conversation_context,
+        "topic_query": topic_query,
+    }
+
+
+# ---------------------------------------------------------------------------
+# Node 3 — classify_intent
 # ---------------------------------------------------------------------------
 
 def classify_intent(state: AgentState) -> AgentState:
     if state.get("blocked"):
         return {**state, "intent": "blocked", "record_id": None}
 
-    query = state["guardrail_result"].sanitised_query
+    query = state.get("query_for_retrieval") or state["guardrail_result"].sanitised_query
     intent, record_id = _classify(query)
     return {**state, "intent": intent, "record_id": record_id}
 
 
 # ---------------------------------------------------------------------------
-# Node 3a — rag_tool
+# Node 4a — rag_tool
 # ---------------------------------------------------------------------------
 
 def rag_tool(state: AgentState) -> AgentState:
-    query = state["guardrail_result"].sanitised_query
-    result = retrieve_policy(query, collection_name=COLLECTION_FIXED)
+    user_query = state["guardrail_result"].sanitised_query
+    query = state.get("query_for_retrieval") or user_query
+    result = retrieve_policy(
+        query,
+        collection_name=COLLECTION_FIXED,
+        user_query=user_query,
+        conversation_context=state.get("conversation_context", ""),
+    )
 
     events: list[GuardrailTrace] = list(state.get("guardrail_events", []))
     is_grounded, detail = check_groundedness(
         top_score=result.get("top_score", 0.0),
-        domain_gate_passed=result.get("grounded", False),
+        domain_gate_passed=result.get("domain_gate_passed", False),
     )
     if not is_grounded:
         events.append(GuardrailTrace(
@@ -206,7 +282,7 @@ def rag_tool(state: AgentState) -> AgentState:
 
 
 # ---------------------------------------------------------------------------
-# Node 3b — appointment_tool
+# Node 4b — appointment_tool
 # ---------------------------------------------------------------------------
 
 def appointment_tool(state: AgentState) -> AgentState:
@@ -228,7 +304,7 @@ def appointment_tool(state: AgentState) -> AgentState:
 
 
 # ---------------------------------------------------------------------------
-# Node 4 — format_response
+# Node 5 — format_response
 # ---------------------------------------------------------------------------
 
 def _build_answer(state: AgentState) -> str:
@@ -241,6 +317,18 @@ def _build_answer(state: AgentState) -> str:
             "Your request has been blocked. It appears to contain content "
             "that attempts to override or manipulate the assistant's behaviour. "
             "Please rephrase your question."
+        )
+
+    if intent == "conversational":
+        query = state.get("guardrail_result").sanitised_query.lower()
+        lead = "You're welcome! " if query.startswith(("thank", "thanks")) else "Welcome to the Practo Support Portal! "
+        return lead + (
+            "I can help you with:\n"
+            "• appointment booking, cancellation, and rescheduling policies\n"
+            "• consultation fees, insurance claims, prescriptions, lab tests, and telemedicine\n"
+            "• privacy, emergencies, follow-up discounts, second opinions, and home visits\n"
+            "• appointment status checks using an ID such as APT-0008\n\n"
+            "What would you like to know?"
         )
 
     # Appointment route
@@ -279,6 +367,8 @@ def format_response(state: AgentState) -> AgentState:
     # Determine route enum
     if state.get("blocked"):
         route = RouteType.GUARDRAIL_BLOCKED
+    elif intent == "conversational":
+        route = RouteType.CONVERSATIONAL
     elif intent == "appointment":
         route = RouteType.APPOINTMENT
     else:
@@ -367,6 +457,7 @@ def format_response(state: AgentState) -> AgentState:
         "query": validated.query_sanitised,
         "answer": validated.answer[:200],
         "route": validated.route.value,
+        "topic_query": state.get("topic_query", validated.query_sanitised),
         "timestamp": ts,
     })
 
@@ -384,6 +475,8 @@ def _route_after_classify(state: AgentState) -> str:
     """Return the name of the next node after classify_intent."""
     if state.get("blocked"):
         return "format_response"
+    if state.get("intent") == "conversational":
+        return "format_response"
     if state.get("intent") == "appointment":
         return "appointment_tool"
     return "rag_tool"
@@ -397,13 +490,15 @@ def build_graph() -> StateGraph:
     g = StateGraph(AgentState)
 
     g.add_node("guardrail_input", guardrail_input)
+    g.add_node("resolve_conversation_context", resolve_conversation_context)
     g.add_node("classify_intent", classify_intent)
     g.add_node("rag_tool", rag_tool)
     g.add_node("appointment_tool", appointment_tool)
     g.add_node("format_response", format_response)
 
     g.set_entry_point("guardrail_input")
-    g.add_edge("guardrail_input", "classify_intent")
+    g.add_edge("guardrail_input", "resolve_conversation_context")
+    g.add_edge("resolve_conversation_context", "classify_intent")
 
     # Genuine conditional edge: routes to rag_tool OR appointment_tool
     g.add_conditional_edges(
@@ -412,7 +507,7 @@ def build_graph() -> StateGraph:
         {
             "rag_tool": "rag_tool",
             "appointment_tool": "appointment_tool",
-            "format_response": "format_response",  # injection blocked
+            "format_response": "format_response",  # injection blocked or conversational
         },
     )
 

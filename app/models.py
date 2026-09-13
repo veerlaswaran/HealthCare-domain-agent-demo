@@ -21,6 +21,7 @@ from pydantic import BaseModel, Field, field_validator, model_validator
 # ---------------------------------------------------------------------------
 
 class RouteType(str, Enum):
+    CONVERSATIONAL = "conversational"
     RAG = "rag"
     APPOINTMENT = "appointment"
     GUARDRAIL_BLOCKED = "guardrail_blocked"

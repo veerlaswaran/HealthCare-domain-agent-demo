@@ -4,7 +4,7 @@ Track: **Healthcare (Practo)**
 
 Completed: Final Capstone — all four parts (Tasks 1–16).
 
-Runs entirely under **MOCK_LLM** with **zero API keys** and **zero network access** required (default `OFFLINE_MODE=true` uses a local TF-IDF embedding backend; default `USE_REAL_LLM=false` uses a deterministic mock generator).
+Runs under a deterministic **MOCK_LLM** with **zero API keys**. The primary embedding backend is the free, locally cached Hugging Face SentenceTransformers model `all-MiniLM-L6-v2`; `OFFLINE_MODE=true` remains available as an explicit TF-IDF fallback when network/model download is unavailable.
 
 ---
 
@@ -18,7 +18,9 @@ pip install langgraph-checkpoint-sqlite   # Task 15
 # 2. Validate dataset
 python scripts/dataset.py
 
-# 3. Seed ChromaDB (both collections, OFFLINE_MODE=true by default)
+# 3. Download/cache the free Hugging Face model once and seed both collections
+python scripts/setup_hf_model.py
+# Future runs use the cached model:
 python scripts/seed_kb.py
 
 # 4. Run all demos
@@ -71,38 +73,38 @@ Transcript: `transcripts/t01_dataset.txt`
 | `policy_fixed` | Fixed-size with overlap | 200-char chunks, 40-char overlap |
 | `policy_sentence` | Sentence-based | 2 sentences grouped per chunk |
 
-Embedding model: `all-MiniLM-L6-v2` (SentenceTransformers) when `OFFLINE_MODE=false`; TF-IDF (586-dim, pure numpy) when `OFFLINE_MODE=true` (default).
+Embedding model: `all-MiniLM-L6-v2` (SentenceTransformers, 384-dimensional) by default. TF-IDF (pure numpy) is retained only as an explicit `OFFLINE_MODE=true` fallback.
 
 Transcript: `transcripts/t03_seed_kb.txt`
 
 ### Task 4 — Grounded Generation & Threshold Calibration
 
-**Two-layer groundedness check (TF-IDF offline mode):**
+**Two-layer groundedness check (SentenceTransformers mode):**
 
 - **Layer 1 — domain keyword gate:** query must contain at least one medical/scheduling term. Rejects out-of-scope queries immediately regardless of similarity score.
-- **Layer 2 — cosine similarity threshold = `0.18`:** rejects low-scoring queries that passed Layer 1.
+- **Layer 2 — cosine similarity threshold = `0.42`:** rejects low-scoring queries that passed Layer 1.
 
-**Measured calibration scores (`policy_fixed`, TF-IDF):**
+**Measured calibration scores (`policy_fixed`, `all-MiniLM-L6-v2`):**
 
 | Query | Type | kw_gate | Top-1 cosine sim |
 |---|---|---|---|
-| "How do I cancel or reschedule my appointment?" | in-scope | PASS | 0.3767 |
-| "What are the consultation fees for Cardiology?" | in-scope | PASS | 0.4131 |
-| "How long do blood test results take?" | in-scope | PASS | 0.3582 |
-| "What is the best cricket stadium in India?" | out-of-scope | FAIL | 0.2710 |
-| "How do I apply for a bank loan?" | out-of-scope | FAIL | 0.2875 |
+| "How do I cancel or reschedule my appointment?" | in-scope | PASS | 0.7026 |
+| "What are the consultation fees for Cardiology?" | in-scope | PASS | 0.6770 |
+| "How long do blood test results take?" | in-scope | PASS | 0.6208 |
+| "What is the best cricket stadium in India?" | out-of-scope | FAIL | 0.1821 |
+| "How do I apply for a bank loan?" | out-of-scope | FAIL | 0.2223 |
 
-Min in-scope: 0.3582 — Max out-of-scope: 0.2875 — threshold set to 0.18 (domain gate is the primary protection; threshold catches partial-keyword edge cases). All out-of-scope queries blocked by Layer 1; threshold provides defence-in-depth.
+Min in-scope: 0.6208 — Max out-of-scope: 0.2223 — midpoint threshold set to 0.42. This value lies between the empirically observed clusters; the domain gate remains a second independent safeguard.
 
 Transcripts: `transcripts/t04_calibrate.txt`, `transcripts/t04_rag_demo.txt`
 
 ### Task 5 — Chunking Strategy Evaluation (P@3 / R@3)
 
-**`policy_fixed`** — Mean P@3=0.600, Mean R@3=0.800
+**`policy_fixed`** — Mean P@3=0.900, Mean R@3=1.000
 
-**`policy_sentence`** — Mean P@3=0.500, Mean R@3=0.800
+**`policy_sentence`** — Mean P@3=0.700, Mean R@3=1.000
 
-**Recommendation:** Deploy `policy_fixed`. It achieves higher Mean P@3 (0.600 vs 0.500) at identical recall. Fixed-size chunks with overlap capture boundary-spanning content that sentence-based grouping may split across separate low-ranking chunks, giving the generator more precise context with fewer irrelevant sections.
+**Recommendation:** Deploy `policy_fixed`. With the final SentenceTransformers index it achieves higher Mean P@3 (0.900 vs 0.700) at identical recall (1.000). Fixed-size chunks with overlap capture boundary-spanning content while keeping the retrieved context more precise.
 
 Transcript: `transcripts/t05_chunking_eval.txt`
 
@@ -137,7 +139,7 @@ Transcript: `transcripts/t07_routes.txt`
 
 ### Task 8 — Persisted Memory
 
-JSON file per session under `logs/memory/<session_id>.json`. Atomic write (tmp+rename). Transcript A shows 3-turn history carried across turns; Transcript B shows fresh session with empty state.
+JSON file per session under `logs/memory/<session_id>.json`. Atomic write (tmp+rename). Recent sanitised user turns are injected only for recognised follow-ups, so a vague second message such as "How long do refunds take?" inherits the preceding cancellation topic for retrieval and generation. Transcript A shows this context carry-over; Transcript B shows a fresh session with empty state.
 
 Transcript: `transcripts/t08_memory.txt`
 
@@ -182,9 +184,9 @@ Judge: deterministic keyword-overlap heuristic (no LLM API). Each metric scored 
 
 | Score | Average across 15 queries |
 |---|---|
-| Context Relevance (CR) | **0.77** |
+| Context Relevance (CR) | **0.70** |
 | Groundedness (GR) | **0.87** |
-| Answer Relevance (AR) | **0.87** |
+| Answer Relevance (AR) | **0.83** |
 | Route accuracy | **15/15 (100%)** |
 
 Test set: 13 in-scope (covers all 12 KB topics; consultation_fee_structure has 2 queries) + 1 out-of-scope + 1 edge-case.
@@ -197,11 +199,11 @@ Transcript: `transcripts/t13_eval.txt`
 
 ### Task 14 — MCP Tool Server
 
-`mcp/server.py` — FastAPI app implementing JSON-RPC 2.0 at `POST /mcp` (same protocol as fastmcp, compatible with all MCP clients). Exposes `check_appointment_status` with full input schema.
+`mcp/server.py` — a real `fastmcp.FastMCP` server using HTTP transport at `/mcp`. It exposes `check_appointment_status` with a full docstring and structured result.
 
 `mcp/client.py` — separate script that calls `tools/list` then `tools/call` for 4 record IDs.
 
-Note: `fastmcp` requires Python ≥3.10. This machine runs Python 3.9. The raw JSON-RPC 2.0 implementation is protocol-identical; install `fastmcp` on Python 3.10+ to use the decorator syntax instead.
+Validated with Python 3.13 and `fastmcp` 4.0.3; the separate client discovers the tool via `tools/list` and calls it via `tools/call`.
 
 Transcript: `transcripts/t14_mcp.txt`
 
@@ -259,7 +261,7 @@ practo-project/
 ├── eval/
 │   └── run_eval.py        # Task 13 — 15-query RAG triad
 ├── mcp/
-│   ├── server.py          # Task 14 — MCP JSON-RPC 2.0 server
+│   ├── server.py          # Task 14 — FastMCP HTTP server
 │   └── client.py          # Task 14 — MCP client (separate process)
 ├── scripts/
 │   ├── dataset.py         # Task 1 — deterministic dataset generator
@@ -279,8 +281,10 @@ practo-project/
 
 | Variable | Default | Effect |
 |---|---|---|
-| `OFFLINE_MODE` | `true` | `true` = TF-IDF embeddings (no network); `false` = SentenceTransformers |
+| `OFFLINE_MODE` | `false` | `false` = SentenceTransformers; `true` = TF-IDF fallback (no model download) |
 | `USE_REAL_LLM` | `false` | `false` = MOCK_LLM (deterministic); `true` = Groq API |
+| `USE_HF_LLM` | `false` | `true` = local Hugging Face FLAN-T5 generation from retrieved context |
+| `HF_GENERATION_MODEL` | `google/flan-t5-small` | Local text-generation model; download once with `python scripts/setup_hf_generation_model.py` |
 | `GROQ_API_KEY` | `` | Only needed when `USE_REAL_LLM=true` |
 
-All acceptance criteria are satisfied under `OFFLINE_MODE=true USE_REAL_LLM=false` (the defaults). No API key, no network access required.
+All acceptance criteria are demonstrated under `OFFLINE_MODE=false USE_REAL_LLM=false`: free local SentenceTransformers embeddings and deterministic MOCK_LLM generation. No API key is required. After the one-time model download, the model is served from the local Hugging Face cache.

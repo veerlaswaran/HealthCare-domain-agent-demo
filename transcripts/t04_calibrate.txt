@@ -1,6 +1,6 @@
 ======================================================================
 Similarity Threshold Calibration — Two-Layer Groundedness Check
-Embedding : TF-IDF (offline)
+Embedding : SentenceTransformers
 Collection: policy_fixed
 ======================================================================
 
@@ -9,26 +9,26 @@ Layer 2: Cosine similarity >= threshold
 
 In-scope queries (expect kw_gate=PASS, high sim)
 ----------------------------------------------------------------------
-  sim=0.3767  kw_gate=PASS  |  How do I cancel or reschedule my appointment?
-  sim=0.4131  kw_gate=PASS  |  What are the consultation fees for Cardiology?
-  sim=0.3582  kw_gate=PASS  |  How long do blood test results take?
+  sim=0.7026  kw_gate=PASS  |  How do I cancel or reschedule my appointment?
+  sim=0.6770  kw_gate=PASS  |  What are the consultation fees for Cardiology?
+  sim=0.6208  kw_gate=PASS  |  How long do blood test results take?
 
 Out-of-scope queries (expect kw_gate=FAIL, low sim)
 ----------------------------------------------------------------------
-  sim=0.2710  kw_gate=FAIL  |  What is the best cricket stadium in India?
-  sim=0.2875  kw_gate=FAIL  |  How do I apply for a bank loan?
+  sim=0.1821  kw_gate=FAIL  |  What is the best cricket stadium in India?
+  sim=0.2223  kw_gate=FAIL  |  How do I apply for a bank loan?
 
-In-scope    scores : [0.3767, 0.4131, 0.3582]
-Out-of-scope scores: [0.271, 0.2875]
-Min in-scope       : 0.3582
-Max out-of-scope   : 0.2875
-Midpoint gap       : 0.3228
-Chosen threshold   : 0.1800  (from app/config.py)
+In-scope    scores : [0.7026, 0.677, 0.6208]
+Out-of-scope scores: [0.1821, 0.2223]
+Min in-scope       : 0.6208
+Max out-of-scope   : 0.2223
+Midpoint gap       : 0.4215
+Chosen threshold   : 0.4200  (from app/config.py)
 
 Two-layer verdict for each query:
   [OK] grounded=True (kw=True, sim_ok=True) | How do I cancel or reschedule my appointment?
   [OK] grounded=True (kw=True, sim_ok=True) | What are the consultation fees for Cardiology?
   [OK] grounded=True (kw=True, sim_ok=True) | How long do blood test results take?
-  [OK] grounded=False (kw=False, sim_ok=True) | What is the best cricket stadium in India?
-  [OK] grounded=False (kw=False, sim_ok=True) | How do I apply for a bank loan?
+  [OK] grounded=False (kw=False, sim_ok=False) | What is the best cricket stadium in India?
+  [OK] grounded=False (kw=False, sim_ok=False) | How do I apply for a bank loan?
 ======================================================================

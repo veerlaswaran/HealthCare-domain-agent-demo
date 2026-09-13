@@ -9,7 +9,7 @@ Test cases: 15
   Q07 — How long do blood test results take to be ready?
   Q08 — Is telemedicine available for Dermatology consultations?
   Q09 — What should I do in case of a medical emergency at the clini
-  Q10 — How does Practo protect my personal health data and medical 
+  Q10 — How does Practo protect my personal health data and medical
   Q11 — What discount do I get for a follow-up visit within 7 days?
   Q12 — How do I request a second opinion from another doctor on Pra
   Q13 — Can elderly patients get a doctor home visit?
@@ -22,23 +22,23 @@ Test cases: 15  |  Judge: keyword-overlap heuristic (deterministic)
 ========================================================================================
 ID    Topic                              Route            CR    GR    AR  Lat(ms)
 ----------------------------------------------------------------------------------------
-Q01   appointment_booking_policy         rag            0.5   1.0   1.0     63.7
-Q02   cancellation_rescheduling_policy   rag            1.0   1.0   1.0     10.2
-Q03   consultation_fee_structure         rag            0.5   1.0   1.0      8.0
-Q04   consultation_fee_structure         rag            1.0   1.0   1.0      6.7
-Q05   insurance_claim_process            rag            1.0   1.0   1.0      5.0
-Q06   prescription_refill_policy         rag            0.5   1.0   1.0      5.4
-Q07   lab_test_turnaround_times          rag            0.5   1.0   1.0      5.9
-Q08   telemedicine_eligibility           rag            1.0   1.0   1.0      5.0
-Q09   emergency_visit_protocol           rag            1.0   1.0   1.0      5.8
-Q10   patient_data_privacy_policy        rag            1.0   1.0   1.0      5.7
-Q11   follow_up_visit_discount_policy    rag            1.0   1.0   1.0      5.4
-Q12   second_opinion_process             rag            1.0   1.0   1.0      5.3
-Q13   home_visit_eligibility             rag            1.0   1.0   1.0      4.7
-Q14   OUT_OF_SCOPE                       ungrounded     0.0   0.0   0.0      4.5
-Q15   EDGE_CASE                          ungrounded     0.5   0.0   0.0      4.7
+Q01   appointment_booking_policy         rag            0.5   1.0   1.0  26239.7
+Q02   cancellation_rescheduling_policy   rag            1.0   1.0   1.0     36.0
+Q03   consultation_fee_structure         rag            0.5   1.0   1.0     32.9
+Q04   consultation_fee_structure         rag            1.0   1.0   1.0     32.2
+Q05   insurance_claim_process            rag            1.0   1.0   1.0     29.8
+Q06   prescription_refill_policy         rag            0.5   1.0   0.5     31.8
+Q07   lab_test_turnaround_times          rag            0.5   1.0   1.0     30.6
+Q08   telemedicine_eligibility           rag            1.0   1.0   1.0     31.6
+Q09   emergency_visit_protocol           rag            1.0   1.0   1.0     30.6
+Q10   patient_data_privacy_policy        rag            0.5   1.0   1.0     32.9
+Q11   follow_up_visit_discount_policy    rag            1.0   1.0   1.0     32.0
+Q12   second_opinion_process             rag            1.0   1.0   1.0     31.6
+Q13   home_visit_eligibility             rag            1.0   1.0   1.0     30.9
+Q14   OUT_OF_SCOPE                       ungrounded     0.0   0.0   0.0     32.6
+Q15   EDGE_CASE                          ungrounded     0.0   0.0   0.0     32.1
 ----------------------------------------------------------------------------------------
-AVERAGE                                                  0.77  0.87  0.87
+AVERAGE                                                  0.70  0.87  0.83
 ========================================================================================
   CR = context_relevance   GR = groundedness   AR = answer_relevance
   Route accuracy: 15/15 (100%)
@@ -47,77 +47,77 @@ Per-query detail (answer snippet):
 ----------------------------------------------------------------------------------------
   Q01 [appointment_booking_policy]
      Q: How can I book a specialist appointment on Practo?
-     A: Based on Practo clinic policy (top 3 relevant section(s)):  [1] (source: appointment_booking_policy, similarity: 0.216) 
-     CR=0.5  GR=1.0  AR=1.0  sim=0.216  route=rag(grounded)
+     A: Based on Practo clinic policy (top 3 relevant section(s)):  [1] (source: appointment_booking_policy, similarity: 0.7637)
+     CR=0.5  GR=1.0  AR=1.0  sim=0.7637  route=rag(grounded)
 
   Q02 [cancellation_rescheduling_policy]
      Q: What is the cancellation fee if I cancel within 4 hours?
      A: Based on Practo clinic policy (top 3 relevant section(s)):  [1] (source: cancellation_rescheduling_policy, similarity: 0
-     CR=1.0  GR=1.0  AR=1.0  sim=0.5762  route=rag(grounded)
+     CR=1.0  GR=1.0  AR=1.0  sim=0.6297  route=rag(grounded)
 
   Q03 [consultation_fee_structure]
      Q: What is the consultation fee for a Cardiology visit?
-     A: Based on Practo clinic policy (top 3 relevant section(s)):  [1] (source: home_visit_eligibility, similarity: 0.3292) nts
-     CR=0.5  GR=1.0  AR=1.0  sim=0.3292  route=rag(grounded)
+     A: Based on Practo clinic policy (top 3 relevant section(s)):  [1] (source: consultation_fee_structure, similarity: 0.6838)
+     CR=0.5  GR=1.0  AR=1.0  sim=0.6838  route=rag(grounded)
 
   Q04 [consultation_fee_structure]
      Q: Do senior citizens get a discount on consultation fees?
-     A: Based on Practo clinic policy (top 3 relevant section(s)):  [1] (source: consultation_fee_structure, similarity: 0.5237)
-     CR=1.0  GR=1.0  AR=1.0  sim=0.5237  route=rag(grounded)
+     A: Based on Practo clinic policy (top 3 relevant section(s)):  [1] (source: consultation_fee_structure, similarity: 0.8498)
+     CR=1.0  GR=1.0  AR=1.0  sim=0.8498  route=rag(grounded)
 
   Q05 [insurance_claim_process]
      Q: How do I make a cashless insurance claim at the clinic?
-     A: Based on Practo clinic policy (top 3 relevant section(s)):  [1] (source: insurance_claim_process, similarity: 0.3618) th
-     CR=1.0  GR=1.0  AR=1.0  sim=0.3618  route=rag(grounded)
+     A: Based on Practo clinic policy (top 3 relevant section(s)):  [1] (source: insurance_claim_process, similarity: 0.7207) th
+     CR=1.0  GR=1.0  AR=1.0  sim=0.7207  route=rag(grounded)
 
   Q06 [prescription_refill_policy]
      Q: Can I get a prescription refill for my blood pressure medication online?
-     A: Based on Practo clinic policy (top 3 relevant section(s)):  [1] (source: prescription_refill_policy, similarity: 0.1831)
-     CR=0.5  GR=1.0  AR=1.0  sim=0.1831  route=rag(grounded)
+     A: Based on Practo clinic policy (top 3 relevant section(s)):  [1] (source: prescription_refill_policy, similarity: 0.691)
+     CR=0.5  GR=1.0  AR=0.5  sim=0.691  route=rag(grounded)
 
   Q07 [lab_test_turnaround_times]
      Q: How long do blood test results take to be ready?
-     A: Based on Practo clinic policy (top 3 relevant section(s)):  [1] (source: lab_test_turnaround_times, similarity: 0.3526) 
-     CR=0.5  GR=1.0  AR=1.0  sim=0.3526  route=rag(grounded)
+     A: Based on Practo clinic policy (top 3 relevant section(s)):  [1] (source: lab_test_turnaround_times, similarity: 0.6524)
+     CR=0.5  GR=1.0  AR=1.0  sim=0.6524  route=rag(grounded)
 
   Q08 [telemedicine_eligibility]
      Q: Is telemedicine available for Dermatology consultations?
-     A: Based on Practo clinic policy (top 3 relevant section(s)):  [1] (source: telemedicine_eligibility, similarity: 0.4397) T
-     CR=1.0  GR=1.0  AR=1.0  sim=0.4397  route=rag(grounded)
+     A: Based on Practo clinic policy (top 3 relevant section(s)):  [1] (source: telemedicine_eligibility, similarity: 0.8016) T
+     CR=1.0  GR=1.0  AR=1.0  sim=0.8016  route=rag(grounded)
 
   Q09 [emergency_visit_protocol]
      Q: What should I do in case of a medical emergency at the clinic?
-     A: Based on Practo clinic policy (top 3 relevant section(s)):  [1] (source: emergency_visit_protocol, similarity: 0.3101) P
-     CR=1.0  GR=1.0  AR=1.0  sim=0.3101  route=rag(grounded)
+     A: Based on Practo clinic policy (top 3 relevant section(s)):  [1] (source: emergency_visit_protocol, similarity: 0.607) Pa
+     CR=1.0  GR=1.0  AR=1.0  sim=0.607  route=rag(grounded)
 
   Q10 [patient_data_privacy_policy]
      Q: How does Practo protect my personal health data and medical records?
-     A: Based on Practo clinic policy (top 3 relevant section(s)):  [1] (source: patient_data_privacy_policy, similarity: 0.3247
-     CR=1.0  GR=1.0  AR=1.0  sim=0.3247  route=rag(grounded)
+     A: Based on Practo clinic policy (top 3 relevant section(s)):  [1] (source: patient_data_privacy_policy, similarity: 0.5747
+     CR=0.5  GR=1.0  AR=1.0  sim=0.5747  route=rag(grounded)
 
   Q11 [follow_up_visit_discount_policy]
      Q: What discount do I get for a follow-up visit within 7 days?
      A: Based on Practo clinic policy (top 3 relevant section(s)):  [1] (source: follow_up_visit_discount_policy, similarity: 0.
-     CR=1.0  GR=1.0  AR=1.0  sim=0.4513  route=rag(grounded)
+     CR=1.0  GR=1.0  AR=1.0  sim=0.5844  route=rag(grounded)
 
   Q12 [second_opinion_process]
      Q: How do I request a second opinion from another doctor on Practo?
-     A: Based on Practo clinic policy (top 3 relevant section(s)):  [1] (source: second_opinion_process, similarity: 0.3845) Pat
-     CR=1.0  GR=1.0  AR=1.0  sim=0.3845  route=rag(grounded)
+     A: Based on Practo clinic policy (top 3 relevant section(s)):  [1] (source: second_opinion_process, similarity: 0.7575) Pat
+     CR=1.0  GR=1.0  AR=1.0  sim=0.7575  route=rag(grounded)
 
   Q13 [home_visit_eligibility]
      Q: Can elderly patients get a doctor home visit?
-     A: Based on Practo clinic policy (top 3 relevant section(s)):  [1] (source: home_visit_eligibility, similarity: 0.2926) lea
-     CR=1.0  GR=1.0  AR=1.0  sim=0.2926  route=rag(grounded)
+     A: Based on Practo clinic policy (top 3 relevant section(s)):  [1] (source: home_visit_eligibility, similarity: 0.6529) lea
+     CR=1.0  GR=1.0  AR=1.0  sim=0.6529  route=rag(grounded)
 
   Q14 [OUT_OF_SCOPE]
      Q: What is the best cricket stadium in India?
      A: I don't know. Your question does not appear to match any topic covered in the Practo clinic knowledge base.
-     CR=0.0  GR=0.0  AR=0.0  sim=0.2618  route=ungrounded(ungrounded)
+     CR=0.0  GR=0.0  AR=0.0  sim=0.1821  route=ungrounded(ungrounded)
 
   Q15 [EDGE_CASE]
      Q: Can I get a refund if I paid by cash?
      A: I don't know. Your question does not appear to match any topic covered in the Practo clinic knowledge base.
-     CR=0.5  GR=0.0  AR=0.0  sim=0.2792  route=ungrounded(ungrounded)
+     CR=0.0  GR=0.0  AR=0.0  sim=0.4084  route=ungrounded(ungrounded)
 
-Results written to: /Users/swveerl/Desktop/capstone-project/practo-project/logs/eval_results.jsonl
+Results written to: C:\Users\shilp\Desktop\capstone-project\capstone-project\practo-project\logs\eval_results.jsonl

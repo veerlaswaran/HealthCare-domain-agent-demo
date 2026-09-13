@@ -23,10 +23,11 @@ from __future__ import annotations
 import re
 import time
 from contextlib import asynccontextmanager
+from pathlib import Path
 from typing import Any
 
 from fastapi import FastAPI, HTTPException, Request, Response
-from fastapi.responses import JSONResponse
+from fastapi.responses import FileResponse, JSONResponse
 
 from api.schemas import (
     AddDocumentRequest,
@@ -81,6 +82,14 @@ app = FastAPI(
     version="1.0.0",
     lifespan=lifespan,
 )
+
+WEB_CLIENT = Path(__file__).parent / "static" / "index.html"
+
+
+@app.get("/", include_in_schema=False)
+async def chat_client() -> FileResponse:
+    """Serve the small browser chat client."""
+    return FileResponse(WEB_CLIENT)
 
 
 # ---------------------------------------------------------------------------

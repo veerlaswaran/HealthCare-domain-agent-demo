@@ -1,9 +1,9 @@
 ============================================================
 Practo Knowledge Base — Seeding ChromaDB Collections
-Mode: OFFLINE (TF-IDF)
+Mode: ONLINE (SentenceTransformers: all-MiniLM-L6-v2)
 ============================================================
 
-Loaded 12 documents from /Users/swveerl/Desktop/capstone-project/practo-project/data/knowledge_base
+Loaded 12 documents from C:\Users\shilp\Desktop\capstone-project\capstone-project\practo-project\data\knowledge_base
   01_appointment_booking_policy.txt  (661 chars)  source=appointment_booking_policy
   02_cancellation_rescheduling_policy.txt  (640 chars)  source=cancellation_rescheduling_policy
   03_consultation_fee_structure.txt  (616 chars)  source=consultation_fee_structure
@@ -20,8 +20,8 @@ Loaded 12 documents from /Users/swveerl/Desktop/capstone-project/practo-project/
 Total chunks — fixed: 59, sentence: 36
 
 Embedding all chunks...
-  Fixed-size   : 59 vectors, dim=586
-  Sentence-based: 36 vectors, dim=586
+  Fixed-size   : 59 vectors, dim=384
+  Sentence-based: 36 vectors, dim=384
 
 Collection 'policy_fixed'  : 59 chunks indexed
   chunk size=200 chars, overlap=40 chars
@@ -29,8 +29,8 @@ Collection 'policy_sentence': 36 chunks indexed
   strategy=sentence-based, group_size=2 sentences
 
 Spot-check — 'cancellation fee policy'
-  [policy_fixed]  sim=0.4232  snippet: 'Patients must cancel or reschedule at least 4 hours before the scheduled appoint'
-  [policy_sentence]  sim=0.3484  snippet: 'Patients must cancel or reschedule at least 4 hours before the scheduled appoint'
+  [policy_fixed]  sim=0.5881  snippet: 'No-Show and any prepaid consultation fee is forfeited. Refunds for eligible canc'
+  [policy_sentence]  sim=0.5792  snippet: 'Patients must cancel or reschedule at least 4 hours before the scheduled appoint'
 
-Seeding complete. ChromaDB written to: /Users/swveerl/Desktop/capstone-project/practo-project/data/.chroma
+Seeding complete. ChromaDB written to: C:\Users\shilp\Desktop\capstone-project\capstone-project\practo-project\data\.chroma
 ============================================================

@@ -6,8 +6,8 @@ Collections:
   policy_sentence — sentence-based chunks (2 sentences per chunk)
 
 Embedding backend:
-  OFFLINE_MODE=true  (default) → TF-IDF + cosine (no network required)
-  OFFLINE_MODE=false            → SentenceTransformers all-MiniLM-L6-v2
+  OFFLINE_MODE=false (default) → cached SentenceTransformers all-MiniLM-L6-v2
+  OFFLINE_MODE=true            → TF-IDF + cosine fallback (no model required)
 
 Run:  python scripts/seed_kb.py
 """

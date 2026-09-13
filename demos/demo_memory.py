@@ -53,9 +53,11 @@ def transcript_a_multi_turn() -> str:
     )
     _print_turn(r1, show_history=False)
 
-    # Turn 2 — follow-up policy question (history should show Turn 1)
+    # Turn 2 — deliberately vague follow-up. It contains no cancellation
+    # keyword, so it can only retrieve the right policy through persisted
+    # conversation context from Turn 1.
     r2 = run_agent(
-        query="And what is the refund timeline for cancelled appointments?",
+        query="How long do refunds take?",
         session_id=sid, turn=2,
     )
     _print_turn(r2, show_history=True)

@@ -1,5 +1,7 @@
 numpy==2.5.3
 sentence-transformers==6.0.1
+transformers==5.17.0
+torch==2.14.0
 chromadb==1.5.9
 fastapi==0.141.1
 uvicorn[standard]==0.52.4

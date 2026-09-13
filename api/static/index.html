@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Practo Support Agent</title>
+    <style>
+      * { box-sizing: border-box; }
+      body { margin: 0; background: #f4f7fb; color: #13233a; font: 16px/1.5 system-ui, sans-serif; }
+      main { max-width: 760px; min-height: 100vh; margin: auto; padding: 24px 16px; display: flex; flex-direction: column; }
+      h1 { margin: 0; font-size: 1.5rem; } .subtitle { color: #567; margin: 4px 0 20px; }
+      #messages { flex: 1; display: flex; flex-direction: column; gap: 12px; }
+      .message { max-width: 88%; padding: 12px 14px; border-radius: 14px; white-space: pre-wrap; }
+      .user { align-self: flex-end; background: #1264d6; color: white; border-bottom-right-radius: 3px; }
+      .agent { align-self: flex-start; background: white; border: 1px solid #d9e2ef; border-bottom-left-radius: 3px; }
+      .meta { color: #60758d; font-size: .78rem; margin-top: 7px; }
+      form { display: flex; gap: 8px; margin-top: 20px; } input { flex: 1; min-width: 0; padding: 12px; border: 1px solid #aebfd3; border-radius: 9px; font: inherit; }
+      button { border: 0; border-radius: 9px; background: #1264d6; color: white; padding: 10px 16px; font: inherit; cursor: pointer; }
+      button.secondary { background: #e4ebf5; color: #203650; } button:disabled { opacity: .6; cursor: wait; }
+      .actions { display: flex; justify-content: space-between; gap: 8px; margin-top: 10px; }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>Practo Domain Support Agent</h1>
+      <p class="subtitle">Ask about clinic policies or an appointment ID such as APT-0008.</p>
+      <section id="messages" aria-live="polite"></section>
+      <form id="chat-form"><input id="query" placeholder="Type your question…" autocomplete="off" autofocus><button id="send">Send</button></form>
+      <div class="actions"><span id="status" class="meta">Checking API…</span><button id="reset" class="secondary" type="button">New chat</button></div>
+    </main>
+    <script>
+      const messages = document.querySelector('#messages');
+      const form = document.querySelector('#chat-form');
+      const input = document.querySelector('#query');
+      const send = document.querySelector('#send');
+      const status = document.querySelector('#status');
+      let sessionId = crypto.randomUUID();
+      function addMessage(text, role, meta = '') {
+        const bubble = document.createElement('div'); bubble.className = `message ${role}`;
+        const content = document.createElement('div'); content.textContent = text; bubble.append(content);
+        if (meta) { const details = document.createElement('div'); details.className = 'meta'; details.textContent = meta; bubble.append(details); }
+        messages.append(bubble); window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+      }
+      async function checkHealth() {
+        try { const r = await fetch('/health'); const d = await r.json(); status.textContent = d.status === 'ok' ? 'API ready' : 'API degraded'; }
+        catch { status.textContent = 'API unavailable — start the server first'; }
+      }
+      form.addEventListener('submit', async (event) => {
+        event.preventDefault(); const query = input.value.trim(); if (!query) return;
+        addMessage(query, 'user'); input.value = ''; input.disabled = send.disabled = true; status.textContent = 'Agent is thinking…';
+        try {
+          const r = await fetch('/ask', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ query, session_id: sessionId }) });
+          const d = await r.json(); if (!r.ok) throw new Error(d.detail ? JSON.stringify(d.detail) : 'Request failed');
+          const events = d.guardrail_events?.map(e => e.event).join(', ');
+          addMessage(d.answer, 'agent', `Route: ${d.route} · Turn ${d.turn}${events ? ` · Guardrails: ${events}` : ''}`); status.textContent = 'API ready';
+        } catch (error) { addMessage(`Sorry, the request failed: ${error.message}`, 'agent'); status.textContent = 'API unavailable'; }
+        finally { input.disabled = send.disabled = false; input.focus(); }
+      });
+      document.querySelector('#reset').addEventListener('click', () => { sessionId = crypto.randomUUID(); messages.replaceChildren(); addMessage('New conversation started. How can I help?', 'agent'); });
+      addMessage('Hello! I can answer Practo policy questions and check appointment statuses.', 'agent'); checkHealth();
+    </script>
+  </body>
+</html>

@@ -13,6 +13,7 @@ IMPORTANT: seed_kb.py must be run before this module is used, so that
 from __future__ import annotations
 
 import textwrap
+import re
 from typing import Literal
 
 import chromadb
@@ -26,7 +27,9 @@ from app.config import (
     USE_REAL_LLM,
     GROQ_API_KEY,
     GROQ_MODEL,
+    HF_GENERATION_MODEL,
     OFFLINE_MODE,
+    USE_HF_LLM,
 )
 from app.config import KB_DIR
 from app.embeddings import get_embedding_function, reset_embedding_function
@@ -232,6 +235,81 @@ def _groq_answer(query: str, context_chunks: list[dict]) -> str:
 
 
 # ---------------------------------------------------------------------------
+# Local Hugging Face generation — optional
+# ---------------------------------------------------------------------------
+
+_hf_generator: tuple[object, object] | None = None
+
+
+def _get_hf_generator() -> tuple[object, object]:
+    """Load the cached FLAN-T5 model once without making network requests."""
+    global _hf_generator
+    if _hf_generator is None:
+        from transformers import AutoModelForSeq2SeqLM, AutoTokenizer
+
+        try:
+            tokenizer = AutoTokenizer.from_pretrained(
+                HF_GENERATION_MODEL, local_files_only=True
+            )
+            model = AutoModelForSeq2SeqLM.from_pretrained(
+                HF_GENERATION_MODEL, local_files_only=True
+            )
+        except OSError as exc:
+            raise RuntimeError(
+                f"Generation model '{HF_GENERATION_MODEL}' is not cached locally. "
+                "Run `python scripts/setup_hf_generation_model.py` once, or set "
+                "USE_HF_LLM=false to return to deterministic MOCK_LLM mode."
+            ) from exc
+        model.eval()
+        _hf_generator = (tokenizer, model)
+    return _hf_generator
+
+
+def _hf_answer(
+    query: str, context_chunks: list[dict], conversation_context: str = ""
+) -> str:
+    """Generate a concise answer from retrieved context using local FLAN-T5."""
+    tokenizer, model = _get_hf_generator()
+    context = "\n".join(chunk["text"] for chunk in context_chunks)
+    prompt = (
+        "Answer the healthcare support question using only the supplied context. "
+        "If the context does not answer it, say I don't know. Respond in one complete "
+        "sentence and include any relevant currency, time period, or eligibility condition.\n\n"
+        f"Knowledge-base context: {context}\n\n"
+        f"Earlier conversation (may be empty): {conversation_context}\n\n"
+        f"Current question: {query}\nAnswer:"
+    )
+    encoded = tokenizer(  # type: ignore[operator]
+        prompt, return_tensors="pt", truncation=True, max_length=512
+    )
+    generated = model.generate(  # type: ignore[operator]
+        **encoded, max_new_tokens=160, do_sample=False, num_beams=1
+    )
+    answer = tokenizer.decode(  # type: ignore[operator]
+        generated[0], skip_special_tokens=True
+    ).strip()
+    # FLAN-T5-small sometimes returns an amount alone (for example "100")
+    # despite the complete-sentence instruction. Preserve the generated fact
+    # while presenting a clear answer for the user-facing fee questions.
+    numeric_answer = answer.removeprefix("₹").strip().rstrip(".")
+    if "fee" in query.lower() and re.fullmatch(r"\d+(?:\.\d+)?", numeric_answer):
+        answer = f"The applicable fee is ₹{numeric_answer}."
+    # A small local model occasionally emits a single keyword or simply echoes
+    # the question. In that case, return a grounded sentence from the highest
+    # ranked retrieved chunk instead of exposing an unusable fragment.
+    answer_words = re.findall(r"\w+", answer.lower())
+    if len(answer_words) < 3 or answer.strip().lower() == query.strip().lower():
+        for chunk in context_chunks:
+            sentences = re.split(r"(?<=[.?!])\s+", chunk["text"].strip())
+            for sentence in sentences:
+                # Fixed-size chunks can begin in the middle of a sentence.
+                # Prefer a complete, capitalised sentence for user-facing text.
+                if len(sentence.split()) >= 6 and sentence[:1].isupper():
+                    return f"Based on clinic policy: {sentence.strip()}"
+    return answer or "I don't know."
+
+
+# ---------------------------------------------------------------------------
 # Public interface
 # ---------------------------------------------------------------------------
 
@@ -240,6 +318,9 @@ def grounded_answer(
     collection_name: CollectionName = COLLECTION_FIXED,
     top_k: int = RETRIEVAL_TOP_K,
     threshold: float = SIMILARITY_THRESHOLD,
+    *,
+    user_query: str | None = None,
+    conversation_context: str = "",
 ) -> dict:
     """
     Retrieve top-k chunks and generate a grounded answer.
@@ -254,6 +335,7 @@ def grounded_answer(
           "collection"  : collection used,
         }
     """
+    current_question = user_query or query
     hits = retrieve(query, collection_name=collection_name, top_k=top_k)
     top_score = hits[0]["score"] if hits else 0.0
     # Two-layer groundedness: domain keyword gate AND similarity threshold
@@ -265,16 +347,20 @@ def grounded_answer(
             "covered in the Practo clinic knowledge base."
         )
     elif USE_REAL_LLM:
-        answer = _groq_answer(query, hits)
+        answer = _groq_answer(current_question, hits)
+    elif USE_HF_LLM:
+        answer = _hf_answer(current_question, hits, conversation_context)
     else:
         answer = _mock_answer(query, hits)
 
     return {
         "query": query,
+        "user_query": current_question,
         "answer": answer,
         "hits": hits,
         "top_score": top_score,
         "grounded": grounded,
+        "domain_gate_passed": _passes_domain_gate(query),
         "collection": collection_name,
     }
 

@@ -40,11 +40,21 @@ class EmbeddingBackend(Protocol):
 # ---------------------------------------------------------------------------
 
 class SentenceTransformerBackend:
-    """Thin wrapper around sentence-transformers SentenceTransformer."""
+    """SentenceTransformers wrapper that uses the locally cached model only."""
 
     def __init__(self, model_name: str = EMBEDDING_MODEL) -> None:
         from sentence_transformers import SentenceTransformer
-        self._model = SentenceTransformer(model_name)
+        try:
+            # The setup script downloads this model once.  local_files_only
+            # prevents request-time metadata checks and keeps normal agent runs
+            # deterministic and network-independent afterwards.
+            self._model = SentenceTransformer(model_name, local_files_only=True)
+        except OSError as exc:
+            raise RuntimeError(
+                f"Embedding model '{model_name}' is not cached locally. "
+                "Run `python scripts/setup_hf_model.py` once, or set "
+                "OFFLINE_MODE=true to use the TF-IDF fallback."
+            ) from exc
 
     def embed(self, texts: list[str]) -> np.ndarray:
         vecs = self._model.encode(texts, normalize_embeddings=True, show_progress_bar=False)
